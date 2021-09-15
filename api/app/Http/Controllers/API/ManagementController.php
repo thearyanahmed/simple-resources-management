@@ -12,7 +12,7 @@ class ManagementController extends Controller
     {
         $data = $request->validated();
 
-        dd($data);
+        dd('data',$data);
 
 
         return response()->json($request->all(),200);
