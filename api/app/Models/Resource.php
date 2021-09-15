@@ -8,4 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Resource extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'id' => 'int',
+    ];
+
+    protected $fillable = [
+        'title', 'resourceable_type', 'resourceable_id'
+    ];
+
+    public function resourceable()
+    {
+        return $this->morphTo();
+    }
 }
