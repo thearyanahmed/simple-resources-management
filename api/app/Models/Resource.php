@@ -38,13 +38,12 @@ class Resource extends Model
 
         try {
             $resource = [
-                'title' => $data['title'],
+                'title'             => $data['title'],
                 'resourceable_type' => self::getResourceableType($data['resource_type'])
             ];
 
-            unset($data['title'],$data['resource_type']);
-
-            $relatedResource = $resource['resourceable_type']::create(Arr::except($data,['title','resource_type']));
+            $relatedResourceData = Arr::except($data,['title','resource_type']);
+            $relatedResource = $resource['resourceable_type']::create($relatedResourceData);
 
             $resource['resourceable_id'] = $relatedResource->id;
 
@@ -54,7 +53,7 @@ class Resource extends Model
 
             // need DTO ?
             return [
-                'resource'      => $resource,
+                'resource'             => $resource,
                 $data['resource_type'] => $relatedResource
             ];
 

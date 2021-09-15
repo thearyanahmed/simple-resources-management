@@ -48,6 +48,7 @@ class ResourceManagementTest extends TestCase
 
         $response = $this->json('post',route('resources.store'),$data,$this->authHeader);
 
+        $response->dump();
 //        $resourceStructure = Resouce::make()->toArray();//
         $response->assertStatus(201);
     }
