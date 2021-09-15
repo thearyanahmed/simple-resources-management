@@ -64,6 +64,24 @@ class ResourceManagementTest extends TestCase
         $this->assertEquals($linkCount + 1, Link::count());
     }
 
-    // html snippet resource can be created
-    // pdf resource can be created
+    public function test_resource_type_is_required_when_creating_a_resource()
+    {
+        $data = [
+//            'resource_type'   => 'link',
+            'title'            => 'A test link resource.',
+            'link'             => 'https://thearyanahmed.com',
+            'opens_in_new_tab' => true,
+        ];
+
+        $response = $this->json('post',route('resources.store'),$data,$this->authHeader);
+
+        $response->dump();
+        $response
+            ->assertJson([
+                'errors' => [
+                    'resource_type' => ["The resource type field is required."]
+                ]
+            ])
+            ->assertStatus(422);
+    }
 }
