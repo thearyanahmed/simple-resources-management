@@ -37,7 +37,8 @@ class CreateResourceRequest extends FormRequest
             $this->getResourceCreationRules(
                 $this->request->get('resource_type')
             ),
-            ['title' => 'required|string|max:150']
+            ['title' => 'required|string|max:150'],
+            ['resource_type' => 'required|string|in:link,html_snippet,pdf'] // rules
         );
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateResourceRequest;
+use App\Models\Resource;
 use Illuminate\Http\Request;
 
 class ManagementController extends Controller
@@ -12,7 +13,7 @@ class ManagementController extends Controller
     {
         $data = $request->validated();
 
-        dd('data',$data);
+        Resource::createResource($data);
 
 
         return response()->json($request->all(),200);
