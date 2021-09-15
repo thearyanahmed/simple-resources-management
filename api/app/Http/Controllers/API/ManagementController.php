@@ -10,11 +10,9 @@ class ManagementController extends Controller
 {
     public function store(CreateResourceRequest $request)
     {
-        dd(1);
-
         $data = $request->validated();
 
-
+        dd($data);
 
 
         return response()->json($request->all(),200);

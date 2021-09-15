@@ -40,6 +40,7 @@ class ResourceManagementTest extends TestCase
     public function test_link_resource_can_be_created()
     {
         $data = [
+            'resource_type'   => 'link',
             'title'            => 'A test link resource.',
             'link'             => 'https://thearyanahmed.com',
             'opens_in_new_tab' => true,

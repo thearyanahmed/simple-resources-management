@@ -26,11 +26,11 @@ class CreateResourceRequest extends FormRequest
     {
         // first we make sure resource_type is given
         // not passing request->all() as we only need to check 'resource_type'
-        Validator::validate(
-            [$this->request->get('resource_type')],
-            ['resource_type' => 'required|string|in:link,html_snippet,pdf']
-        );
 
+        Validator::validate(
+            ['resource_type' => $this->request->get('resource_type')], // data
+            ['resource_type' => 'required|string|in:link,html_snippet,pdf'] // rules
+        );
         // if given, we dynamically pull the resource type rules
         // the array key will exist if the code reaches this point, because we are checking "in:link,html_snippet,pdf"
         return array_merge(
@@ -57,5 +57,4 @@ class CreateResourceRequest extends FormRequest
             ],
         ])[$rule];
     }
-
 }
