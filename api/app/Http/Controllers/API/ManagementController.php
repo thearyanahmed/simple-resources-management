@@ -5,7 +5,6 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateResourceRequest;
 use App\Models\Resource;
-use Illuminate\Http\Request;
 
 class ManagementController extends Controller
 {
@@ -17,8 +16,11 @@ class ManagementController extends Controller
         $data = $request->validated();
 
         // TODO use laravel api resources
-        $res = Resource::createResource($data);
+        Resource::createResource($data);
 
-        return response()->json($res,201);
+        return response()->json([
+            'success' => true,
+            'message' => 'resource created successfully.'
+        ],201);
     }
 }

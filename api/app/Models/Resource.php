@@ -54,7 +54,8 @@ class Resource extends Model
             // need DTO ?
             return [
                 'resource'             => $resource,
-                $data['resource_type'] => $relatedResource
+                $data['resource_type'] => $relatedResource,
+                'resource_type'        => $data['resource_type'],
             ];
 
         } catch (Throwable $e) {

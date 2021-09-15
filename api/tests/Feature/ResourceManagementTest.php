@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Link;
+use App\Models\Resource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -39,6 +41,9 @@ class ResourceManagementTest extends TestCase
 
     public function test_link_resource_can_be_created()
     {
+        $resourceCount = Resource::count();
+        $linkCount     = Link::count();
+
         $data = [
             'resource_type'   => 'link',
             'title'            => 'A test link resource.',
@@ -48,9 +53,15 @@ class ResourceManagementTest extends TestCase
 
         $response = $this->json('post',route('resources.store'),$data,$this->authHeader);
 
-        $response->dump();
-//        $resourceStructure = Resouce::make()->toArray();//
-        $response->assertStatus(201);
+        $response
+            ->assertJson([
+                'success' => true,
+                'message' => 'resource created successfully.'
+            ])
+            ->assertStatus(201);
+
+        $this->assertEquals($resourceCount + 1, Resource::count());
+        $this->assertEquals($linkCount + 1, Link::count());
     }
 
     // html snippet resource can be created
