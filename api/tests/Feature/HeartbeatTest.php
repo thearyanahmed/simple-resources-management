@@ -12,14 +12,12 @@ class HeartbeatTest extends TestCase
      *
      * @return void
      */
-    public function test_example()
+    public function test_app_is_beating()
     {
         $response = $this->get('/api/heartbeat');
 
-        $response->assertJson([
-            'status' => 'beating'
-        ],true);
-
-        $response->assertStatus(200);
+        $response
+            ->assertJson(['status' => 'beating'],true)
+            ->assertStatus(200);
     }
 }
