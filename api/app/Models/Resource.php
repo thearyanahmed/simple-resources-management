@@ -4,9 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
-use Throwable;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Resource extends Model
 {
@@ -32,16 +30,16 @@ class Resource extends Model
         'resourceable_type', 'resourceable_id'
     ];
 
-    public function resourceable()
+    public function resourceable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function getResourceTypeAttribute()
+    public function getResourceTypeAttribute(): string
     {
         return ([
             Link::class => Resource::RESOURCE_LINK,
-//            Link::class => Resource::RESOURCE_PDF,
+            File::class => Resource::RESOURCE_FILE,
 //            Link::class => Resource::RESOURCE_HTML_SNIPPET,
         ])[$this->resourceable_type];
     }

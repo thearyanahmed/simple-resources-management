@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class ResourceManagementTest extends TestCase
+class ResourceTest extends TestCase
 {
     use RefreshDatabase;
 

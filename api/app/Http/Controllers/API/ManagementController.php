@@ -19,7 +19,6 @@ class ManagementController extends Controller
     {
         $data = $request->validated();
 
-//        $resource = Resource::createResource($data);
         $resource = (new CreateResourceFactory($data))->create();
 
         return response()->json([

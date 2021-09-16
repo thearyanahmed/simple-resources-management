@@ -5,6 +5,7 @@ namespace App\Factories;
 use App\Models\File;
 use App\Models\Link;
 use App\Models\Resource;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -20,13 +21,13 @@ class CreateResourceFactory
     protected array $resourceData;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct(array $data)
     {
         $this->relatedResourceType = $data['resource_type'];
 
-        $this->relatedResourceData =Arr::only($data,$this->requiredRelatedResources());
+        $this->relatedResourceData  = Arr::only($data,$this->requiredRelatedResources());
         $this->relatedResourceModel = new (self::getResourceableType($this->relatedResourceType));
 
         $this->resourceData = [
@@ -80,7 +81,7 @@ class CreateResourceFactory
 
     /**
      * @return string[]
-     * @throws \Exception
+     * @throws Exception
      */
     private function requiredRelatedResources() : array
     {
@@ -96,12 +97,12 @@ class CreateResourceFactory
             return ['file'];
         }
 
-        throw new \Exception('unsupported resource type');
+        throw new Exception('unsupported resource type');
     }
 
     /**
      * @return Model
-     * @throws \Exception
+     * @throws Exception
      */
     private function createRelatedResource() : Model
     {
@@ -118,7 +119,7 @@ class CreateResourceFactory
             return $this->createHtmLSnippet();
         }
 
-        throw new \Exception('unsupported resource');
+        throw new Exception('unsupported resource');
     }
 
     private function createLink() : Link
