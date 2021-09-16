@@ -8,6 +8,7 @@ use App\Models\Resource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Nette\Utils\Html;
 use Tests\TestCase;
 
 class ResourceTest extends TestCase
@@ -204,18 +205,32 @@ class ResourceTest extends TestCase
         $this->assertEquals($linkCount,Link::count());
     }
 
-//    public function test_html_snippet_can_not_be_created_with_invalid_data()
-//    {
-//        $testCases = [
-//            ['data' => ['description' => '', 'title' => 'hello world', 'markup' => $this->faker->randomHtml(1,1) ,'resource_type' => 'html_snippet' ], 'errors' => [ 'link' => ['The link must be a valid URL.']] ],
-//            ['data' => ['description' => UploadedFile::fake()->image('pseudo_image.png'),'markup' => $this->faker->randomHtml(1,1) , 'title' => 'hello world',  'resource_type' => 'html_snippet'], 'errors' => ['opens_in_new_tab' => ['The opens in new tab field must be true or false.']]],
-//            ['data' => ['description' => $this->faker->text(mt_rand(256,400)) , 'markup' => $this->faker->randomHtml(1,1) , 'title' => 'hello world', 'resource_type' => 'html_snippet'], 'errors' => [ 'file' => ['The file field is required.']]],
-//            ['data' => ['description' => 'demo description' , 'title' => $this->faker->text(mt_rand(256,400)), 'markup' => $this->faker->randomHtml(1,1) , 'resource_type' => 'html_snippet'], 'errors' => [ 'file' => ['The file field is required.']]],
-//            ['data' => ['description' => 'demo description' , 'title' => 'hello world', 'markup' => null , 'resource_type' => 'html_snippet'], 'errors' => [ 'file' => ['The file field is required.']]],
-//            ['data' => ['description' => 'demo description' , 'title' => 'hello world', 'markup' => [] , 'resource_type' => 'html_snippet'], 'errors' => [ 'file' => ['The file field is required.']]],
-//            ['data' => ['description' => 'demo description' , 'title' => 'hello world', 'markup' => (object) []  , 'resource_type' => 'html_snippet'], 'errors' => [ 'file' => ['The file field is required.']]],
-//        ];
-//    }
+    public function test_html_snippet_can_not_be_created_with_invalid_data()
+    {
+        $resourceCount = Resource::count();
+        $htmlSnippetCount = HtmlSnippet::count();
+
+        $testCases = [
+            ['data' => ['description' => '', 'title' => '', 'markup' => '' ,'resource_type' => 'html_snippet' ], 'errors' => [ 'description' => ['The description field is required.'], 'title' => ['The title field is required.'],  'markup' => ['The markup field is required.']] ],
+            ['data' => ['description' => UploadedFile::fake()->image('pseudo_image.png'),'markup' => UploadedFile::fake()->image('pseudo_image.png') , 'title' => UploadedFile::fake()->image('pseudo_image.png'),  'resource_type' => 'html_snippet'], 'errors' => [ 'description' => ['The description must be a string.'], 'title' => ['The title must be a string.'], 'markup' => ['The markup must be a string.']] ],
+            ['data' => [ 'description' => $this->faker->realTextBetween(250,300) , 'markup' => $this->faker->randomHtml(1,1) , 'title' => $this->faker->realTextBetween(250,300) , 'resource_type' => 'html_snippet'], 'errors' => [ 'title' => ['The title must not be greater than 255 characters.'] , 'description' => ['The description must not be greater than 255 characters.'] ]],
+            ['data' => ['description' => [], 'markup' => [], 'title' => [] , 'resource_type' => 'html_snippet'], 'errors' => [  'description' => ['The description field is required.'], 'title' => ['The title field is required.'], 'markup' => ['The markup field is required.']]],
+            ['data' => ['description' => (object) [], 'markup' => (object)[], 'title' => (object)[] , 'resource_type' => 'html_snippet'], 'errors' => [ 'description' => ['The description field is required.'], 'title' => ['The title field is required.'], 'markup' => ['The markup field is required.']]],
+            ['data' => ['description' => "demo description", 'markup' => $this->faker->randomHtml(1,1) , 'title' => "demo title" , 'resource_type' => 'file'], 'errors' => [ 'file' => ['The file field is required.']]],
+            ['data' => ['description' => "demo description", 'markup' => $this->faker->randomHtml(1,1) , 'title' => "demo title" , 'resource_type' => 'link'], 'errors' => [ 'link' => ['The link field is required.']]],
+        ];
+
+        foreach($testCases as $testCaseData) {
+            $response = $this->json('post',route('resources.store'),$testCaseData['data'],$this->adminAuthHeader);
+
+            $response
+                ->assertJson(['errors' => $testCaseData['errors']])
+                ->assertStatus(422);
+        }
+
+        $this->assertEquals($resourceCount,Resource::count());
+        $this->assertEquals($htmlSnippetCount,HtmlSnippet::count());
+    }
 
     public function test_html_snippet_resource_can_be_created()
     {
@@ -226,8 +241,8 @@ class ResourceTest extends TestCase
 
         foreach (range(1,$rounds) as $_) {
             $testData = [
-                'title'         => $this->faker->text(mt_rand(5,255)),
-                'description'   => $this->faker->text(mt_rand(5,255)),
+                'title'         => $this->faker->realTextBetween(5,250),
+                'description'   => $this->faker->realTextBetween(5,250),
                 'markup'        => str_replace("\n","",$this->faker->randomHtml(1,1)),
                 'resource_type' => 'html_snippet'
             ];
