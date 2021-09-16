@@ -33,6 +33,7 @@ class Resource extends Model
      * @param array $data
      * @return array
      * Use DTO? overkill?
+     * Set it in a service layer? no?
      * @throws Throwable
      */
     public static function createResource(array $data): array
@@ -75,10 +76,9 @@ class Resource extends Model
     private static function getResourceableType(string $resourceType) : string
     {
         return ([
-            'link' => Link::class,
-            'pdf' => Link::class,
-            'html_snippet' => Link::class,
+            Resource::RESOURCE_LINK         => Link::class,
+            Resource::RESOURCE_PDF          => Link::class,
+            Resource::RESOURCE_HTML_SNIPPET => Link::class,
         ])[$resourceType];
     }
-
 }
