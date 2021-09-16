@@ -7,6 +7,7 @@ use App\Models\Link;
 use App\Models\Resource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class ResourceTest extends TestCase
@@ -182,6 +183,11 @@ class ResourceTest extends TestCase
             ['data' => ['link' => 'https:\/invalidUrl', 'title' => 'hello world', 'opens_in_new_tab' => true, 'resource_type' => 'link' ], 'errors' => [ 'link' => ['The link must be a valid URL.']] ],
             ['data' => ['link' => 'https://averyveryveryverylongurlasdadasdasdasdasdasdadsasdasdasdasdaaasdadasdiahidhaiodaoidhioashdioahsdohaoudihaoshdioashdoihasiodhashsdioahdiohasiodhoashdoihaoidhioashdiasdjajsdiajdiajdsjajsdiasjdiajsdasidjaijsdaijdsiasjdiajsdajsdiajsdiajsdiajsdoahdioahodshaodhioashdoahsoidhaohdsouahsdouhasodhoasd.com', 'title' => 'hello world', 'opens_in_new_tab' => true, 'resource_type' => 'link'], 'errors' => ['link' => ['The link must not be greater than 255 characters.']]],
             ['data' => ['link' => 'https://hello.com', 'title' => 'hello world', 'opens_in_new_tab' => 'invalid boolean', 'resource_type' => 'link'], 'errors' => ['opens_in_new_tab' => ['The opens in new tab field must be true or false.']]],
+            ['data' => ['link' => [], 'title' => [], 'opens_in_new_tab' => true, 'resource_type' => 'link'], 'errors' => ['link' => ['The link field is required.']],  ['title' => ['The title field is required.']]],
+            ['data' => ['link' => null, 'title' => null, 'opens_in_new_tab' => true, 'resource_type' => 'link'], 'errors' => ['link' => ['The link field is required.']],['title' => ['The title field is required.']] ],
+            ['data' => ['link' => "null", 'title' => "null", 'opens_in_new_tab' => true, 'resource_type' => 'link'], 'errors' => ['link' => ['The link must be a valid URL.']]],
+            ['data' => ['link' => (object) [], 'title' => (object) [], 'opens_in_new_tab' => true, 'resource_type' => 'link'], 'errors' => ['link' => ['The link field is required.']]],
+            ['data' => ['link' => UploadedFile::fake()->image('invalid.png'), 'title' => UploadedFile::fake()->image('invalid.png'), 'opens_in_new_tab' => true, 'resource_type' => 'link'], 'errors' => ['link' => ['The link must be a valid URL.']]],
             ['data' => ['link' => 'https://hello.com', 'title' => 'hello world', 'opens_in_new_tab' => true, 'resource_type' => 'file'], 'errors' => [ 'file' => ['The file field is required.']]],
             ['data' => ['link' => 'https://hello.com', 'title' => 'hello world', 'opens_in_new_tab' => true, 'resource_type' => 'html_snippet'], 'errors' => [ 'markup' => ['The markup field is required.'], 'description' => ['The description field is required.']]],
         ];
@@ -198,12 +204,25 @@ class ResourceTest extends TestCase
         $this->assertEquals($linkCount,Link::count());
     }
 
+//    public function test_html_snippet_can_not_be_created_with_invalid_data()
+//    {
+//        $testCases = [
+//            ['data' => ['description' => '', 'title' => 'hello world', 'markup' => $this->faker->randomHtml(1,1) ,'resource_type' => 'html_snippet' ], 'errors' => [ 'link' => ['The link must be a valid URL.']] ],
+//            ['data' => ['description' => UploadedFile::fake()->image('pseudo_image.png'),'markup' => $this->faker->randomHtml(1,1) , 'title' => 'hello world',  'resource_type' => 'html_snippet'], 'errors' => ['opens_in_new_tab' => ['The opens in new tab field must be true or false.']]],
+//            ['data' => ['description' => $this->faker->text(mt_rand(256,400)) , 'markup' => $this->faker->randomHtml(1,1) , 'title' => 'hello world', 'resource_type' => 'html_snippet'], 'errors' => [ 'file' => ['The file field is required.']]],
+//            ['data' => ['description' => 'demo description' , 'title' => $this->faker->text(mt_rand(256,400)), 'markup' => $this->faker->randomHtml(1,1) , 'resource_type' => 'html_snippet'], 'errors' => [ 'file' => ['The file field is required.']]],
+//            ['data' => ['description' => 'demo description' , 'title' => 'hello world', 'markup' => null , 'resource_type' => 'html_snippet'], 'errors' => [ 'file' => ['The file field is required.']]],
+//            ['data' => ['description' => 'demo description' , 'title' => 'hello world', 'markup' => [] , 'resource_type' => 'html_snippet'], 'errors' => [ 'file' => ['The file field is required.']]],
+//            ['data' => ['description' => 'demo description' , 'title' => 'hello world', 'markup' => (object) []  , 'resource_type' => 'html_snippet'], 'errors' => [ 'file' => ['The file field is required.']]],
+//        ];
+//    }
+
     public function test_html_snippet_resource_can_be_created()
     {
         $resourceCount = Resource::count();
         $htmlSnippetCount = HtmlSnippet::count();
 
-        $rounds = mt_rand(2,3);
+        $rounds = mt_rand(5,50);
 
         foreach (range(1,$rounds) as $_) {
             $testData = [
@@ -251,5 +270,4 @@ class ResourceTest extends TestCase
         $this->assertEquals($resourceCount + $rounds, Resource::count());
         $this->assertEquals($htmlSnippetCount + $rounds, HtmlSnippet::count());
     }
-
 }
