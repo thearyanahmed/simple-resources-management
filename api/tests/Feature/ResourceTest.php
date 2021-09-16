@@ -203,23 +203,32 @@ class ResourceTest extends TestCase
         $resourceCount = Resource::count();
         $htmlSnippetCount = HtmlSnippet::count();
 
-        $testData = [
-            'title'         => $this->faker->text(mt_rand(5,255)),
-            'description'   => $this->faker->text(mt_rand(5,255)),
-            'markup'        => $this->faker->randomHtml(5,5),
-            'resource_type' => 'html_snippet'
-        ];
+        $rounds = mt_rand(2,3);
 
-        $rounds = mt_rand(5,100);
+        foreach (range(1,$rounds) as $_) {
+            $testData = [
+                'title'         => $this->faker->text(mt_rand(5,255)),
+                'description'   => $this->faker->text(mt_rand(5,255)),
+                'markup'        => str_replace("\n","",$this->faker->randomHtml(1,1)),
+                'resource_type' => 'html_snippet'
+            ];
 
-        foreach (range(1,2) as $_) {
             $response = $this->json('post',route('resources.store'),$testData,$this->adminAuthHeader);
-            $response->dump();
+
+            $resourceShouldBe = [
+                'title' => $testData['title'],
+                'resource_type' => 'html_snippet',
+                'html_snippet' => [
+                    'description' => $testData['description'],
+                    'markup'      => $testData['markup']
+                ]
+            ];
+
             $response
                 ->assertJson([
                     'success' => true,
                     'message' => 'resource created successfully.',
-//                    'resource' => $resourceShouldBe
+                    'resource' => $resourceShouldBe
                 ])
                 ->assertJsonStructure([
                     'success',
@@ -227,10 +236,10 @@ class ResourceTest extends TestCase
                     'resource' => [
                         'title',
                         'resource_type',
-//                        'link' => [
-//                            'link',
-//                            'opens_in_new_tab'
-//                        ],
+                        'html_snippet' => [
+                            'description',
+                            'markup'
+                        ],
                         'id',
                         'created_at',
                         'updated_at'
