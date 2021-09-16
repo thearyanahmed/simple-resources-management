@@ -28,7 +28,7 @@ class CreateResourceRequest extends FormRequest
         // first we make sure resource_type is given
         // not passing request->all() as we only need to check 'resource_type'
 
-        $resourceTypeRule = ['resource_type' => 'required|string|in:' . Resource::RESOURCE_HTML_SNIPPET . ',' . Resource::RESOURCE_LINK . ',' . Resource::RESOURCE_PDF ];
+        $resourceTypeRule = ['resource_type' => 'required|string|in:' . Resource::RESOURCE_HTML_SNIPPET . ',' . Resource::RESOURCE_LINK . ',' . Resource::RESOURCE_FILE ];
 
         Validator::validate(
             ['resource_type' => $this->request->get('resource_type')], // data
@@ -58,7 +58,7 @@ class CreateResourceRequest extends FormRequest
                 'description' => 'required|string|255',
                 'markup'      => 'required|string|1000',
             ],
-            Resource::RESOURCE_PDF => [
+            Resource::RESOURCE_FILE => [
                 'file' => 'required|file|mimes:pdf|max:5120'
             ],
         ])[$rule];

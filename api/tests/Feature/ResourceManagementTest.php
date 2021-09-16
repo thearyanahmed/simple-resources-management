@@ -181,7 +181,7 @@ class ResourceManagementTest extends TestCase
             ['data' => ['link' => 'https:\/invalidUrl', 'title' => 'hello world', 'opens_in_new_tab' => true, 'resource_type' => 'link' ], 'errors' => [ 'link' => ['The link must be a valid URL.']] ],
             ['data' => ['link' => 'https://averyveryveryverylongurlasdadasdasdasdasdasdadsasdasdasdasdaaasdadasdiahidhaiodaoidhioashdioahsdohaoudihaoshdioashdoihasiodhashsdioahdiohasiodhoashdoihaoidhioashdiasdjajsdiajdiajdsjajsdiasjdiajsdasidjaijsdaijdsiasjdiajsdajsdiajsdiajsdiajsdoahdioahodshaodhioashdoahsoidhaohdsouahsdouhasodhoasd.com', 'title' => 'hello world', 'opens_in_new_tab' => true, 'resource_type' => 'link'], 'errors' => ['link' => ['The link must not be greater than 250 characters.']]],
             ['data' => ['link' => 'https://hello.com', 'title' => 'hello world', 'opens_in_new_tab' => 'invalid boolean', 'resource_type' => 'link'], 'errors' => ['opens_in_new_tab' => ['The opens in new tab field must be true or false.']]],
-            ['data' => ['link' => 'https://hello.com', 'title' => 'hello world', 'opens_in_new_tab' => true, 'resource_type' => 'pdf'], 'errors' => [ 'file' => ['The file field is required.']]],
+            ['data' => ['link' => 'https://hello.com', 'title' => 'hello world', 'opens_in_new_tab' => true, 'resource_type' => 'file'], 'errors' => [ 'file' => ['The file field is required.']]],
             ['data' => ['link' => 'https://hello.com', 'title' => 'hello world', 'opens_in_new_tab' => true, 'resource_type' => 'html_snippet'], 'errors' => [ 'markup' => ['The markup field is required.'], 'description' => ['The description field is required.']]],
         ];
 

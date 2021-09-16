@@ -13,7 +13,7 @@ class Resource extends Model
     use HasFactory;
 
     const RESOURCE_LINK         = 'link';
-    const RESOURCE_PDF          = 'pdf';
+    const RESOURCE_FILE         = 'file';
     const RESOURCE_HTML_SNIPPET = 'html_snippet';
 
     protected $casts = [
@@ -44,7 +44,7 @@ class Resource extends Model
      * Set it in a service layer? no?
      * @throws Throwable
      */
-    public static function createResource(array $data): Resource
+    public static function createResource(array $data): Resource // get some sort of resource factory to create ?
     {
         // use db transaction, multi row insertion dependent on another
         DB::beginTransaction();
@@ -60,6 +60,8 @@ class Resource extends Model
 
             // create related resource
             $relatedResourceData = Arr::except($data,['title','resource_type']);
+
+            // related resource factory to create ?
             $relatedResource = $relatedResourceModel::create($relatedResourceData);
 
             $resource['resourceable_id'] = $relatedResource->id;
@@ -86,7 +88,7 @@ class Resource extends Model
     {
         return ([
             Resource::RESOURCE_LINK         => Link::class,
-            Resource::RESOURCE_PDF          => Link::class,
+            Resource::RESOURCE_FILE          => Link::class,
             Resource::RESOURCE_HTML_SNIPPET => Link::class,
         ])[$resourceType];
     }
