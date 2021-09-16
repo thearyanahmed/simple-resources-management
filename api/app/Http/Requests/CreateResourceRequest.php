@@ -56,7 +56,7 @@ class CreateResourceRequest extends FormRequest
             ],
             Resource::RESOURCE_HTML_SNIPPET => [
                 'description' => 'required|string|max:255',
-                'markup'      => 'required|string|max:1000',
+                'markup'      => 'required|string|max:10000',
             ],
             Resource::RESOURCE_FILE => [
                 'file' => 'required|file|mimes:pdf|max:5120'

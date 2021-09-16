@@ -58,7 +58,6 @@ class CreateResourceFactory
         try {
             // create the related resource type
             $relatedResource = $this->createRelatedResource();
-
             // assign its model id for relation
             $this->resourceData['resourceable_id'] = $relatedResource->id;
 
@@ -135,8 +134,7 @@ class CreateResourceFactory
 
     private function createHtmLSnippet() : HtmlSnippet
     {
-        // todo change creation
-        return HtmlSnippet::make();
+        return HtmlSnippet::create($this->relatedResourceData);
     }
 
 }

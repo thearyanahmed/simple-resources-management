@@ -9,6 +9,10 @@ class HtmlSnippet extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'id' => 'integer'
+    ];
+
     protected $fillable = [
         'description', 'markup'
     ];
