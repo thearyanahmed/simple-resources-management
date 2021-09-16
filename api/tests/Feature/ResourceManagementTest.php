@@ -44,26 +44,46 @@ class ResourceManagementTest extends TestCase
         $resourceCount = Resource::count();
         $linkCount     = Link::count();
 
-        // use loop
-        $data = [
-            'resource_type'   => 'link',
-            'title'            => 'A test link resource.',
-            'link'             => 'https://thearyanahmed.com',
-            'opens_in_new_tab' => true,
+        $testCases = [
+            [
+                'resource_type'   => 'link',
+                'title'            => 'A test link resource.',
+                'link'             => 'https://thearyanahmed.com',
+                'opens_in_new_tab' => true,
+            ],
+            [
+                'resource_type'   => 'link',
+                'title'            => 'A test link resource that opens in the same tab.',
+                'link'             => 'https://github.com/thearyanahmed',
+                'opens_in_new_tab' => false, // opens in new tab
+            ],
         ];
 
-        $response = $this->json('post',route('resources.store'),$data,$this->authHeader);
+        foreach($testCases as $i => $testCaseData) {
+            $response = $this->json('post',route('resources.store'),$testCaseData['data'],$this->authHeader);
 
-        $response->dump();
-        $response
-            ->assertJson([
-                'success' => true,
-                'message' => 'resource created successfully.'
-            ])
-            ->assertStatus(201);
+            unset($testCaseData['resource_type']);
 
-        $this->assertEquals($resourceCount + 1, Resource::count());
-        $this->assertEquals($linkCount + 1, Link::count());
+            $testCaseData['link'] = [
+                'link' => $testCaseData['link'],
+                'opens_in_new_tab' => $testCaseData['opens_in_new_tab']
+            ];
+
+            $response
+                ->assertJson([
+                    'success' => true,
+                    'message' => 'resource created successfully.',
+                    'resource' => [
+                        $testCaseData,
+                    ]
+                ])
+                ->assertStatus(201);
+
+            $this->assertEquals($resourceCount + $i, Resource::count());
+            $this->assertEquals($linkCount + $i, Link::count());
+        }
+
+
     }
 
     public function test_resource_type_is_required_when_creating_a_resource()

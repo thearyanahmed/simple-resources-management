@@ -24,6 +24,14 @@ class Resource extends Model
         'title', 'resourceable_type', 'resourceable_id'
     ];
 
+    protected $appends = [
+        'resource_type'
+    ];
+
+    protected $hidden = [
+        'resourceable_type', 'resourceable_id'
+    ];
+
     public function resourceable()
     {
         return $this->morphTo();
@@ -38,7 +46,7 @@ class Resource extends Model
      */
     public static function createResource(array $data): Resource
     {
-        // db transaction
+        // use db transaction, multi row insertion dependent on another
         DB::beginTransaction();
 
         try {
@@ -50,17 +58,21 @@ class Resource extends Model
                 'resourceable_type' => $relatedResourceModel,
             ];
 
+            // create related resource
             $relatedResourceData = Arr::except($data,['title','resource_type']);
             $relatedResource = $relatedResourceModel::create($relatedResourceData);
 
             $resource['resourceable_id'] = $relatedResource->id;
 
+            // create resource
             $resource = Resource::create($resource);
 
             DB::commit();
 
+            // assign related resource with specific key
             $resource->{$data['resource_type']} = $relatedResource;
-            // use DTO ?
+
+            //TODO [improvement?] use DTO ?
             return $resource;
 
         } catch (Throwable $e) {
@@ -77,5 +89,14 @@ class Resource extends Model
             Resource::RESOURCE_PDF          => Link::class,
             Resource::RESOURCE_HTML_SNIPPET => Link::class,
         ])[$resourceType];
+    }
+
+    public function getResourceTypeAttribute()
+    {
+        return ([
+            Link::class => Resource::RESOURCE_LINK,
+//            Link::class => Resource::RESOURCE_PDF,
+//            Link::class => Resource::RESOURCE_HTML_SNIPPET,
+        ])[$this->resourceable_type];
     }
 }
