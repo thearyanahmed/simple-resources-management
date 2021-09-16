@@ -55,35 +55,60 @@ class ResourceManagementTest extends TestCase
                 'resource_type'   => 'link',
                 'title'            => 'A test link resource that opens in the same tab.',
                 'link'             => 'https://github.com/thearyanahmed',
-                'opens_in_new_tab' => false, // opens in new tab
+                'opens_in_new_tab' => false,
+            ],
+            [
+                'resource_type'   => 'link',
+                'title'            => 'A test link resource that works with numeric booleans like 0.',
+                'link'             => 'https://github.com/thearyanahmed',
+                'opens_in_new_tab' => 0,
+            ],
+            [
+                'resource_type'   => 'link',
+                'title'            => 'A test link resource that works with numeric booleans like 1.',
+                'link'             => 'https://github.com/thearyanahmed',
+                'opens_in_new_tab' => 1,
             ],
         ];
 
-        foreach($testCases as $i => $testCaseData) {
-            $response = $this->json('post',route('resources.store'),$testCaseData['data'],$this->authHeader);
+        foreach($testCases as $testCaseData) {
+            $response = $this->json('post',route('resources.store'),$testCaseData,$this->authHeader);
 
-            unset($testCaseData['resource_type']);
-
-            $testCaseData['link'] = [
-                'link' => $testCaseData['link'],
-                'opens_in_new_tab' => $testCaseData['opens_in_new_tab']
+            $resourceShouldBe = [
+                'title' => $testCaseData['title'],
+                'resource_type' => 'link',
+                'link' => [
+                    'link' => $testCaseData['link'], // quite messy
+                    'opens_in_new_tab' => $testCaseData['opens_in_new_tab']
+                ]
             ];
 
             $response
                 ->assertJson([
                     'success' => true,
                     'message' => 'resource created successfully.',
+                    'resource' => $resourceShouldBe
+                ])
+                ->assertJsonStructure([
+                    'success',
+                    'message',
                     'resource' => [
-                        $testCaseData,
+                        'title',
+                        'resource_type',
+                        'link' => [
+                            'link',
+                            'opens_in_new_tab'
+                        ],
+                        'id',
+                        'created_at',
+                        'updated_at'
                     ]
                 ])
                 ->assertStatus(201);
-
-            $this->assertEquals($resourceCount + $i, Resource::count());
-            $this->assertEquals($linkCount + $i, Link::count());
         }
 
-
+        $this->assertEquals($resourceCount + count($testCases), Resource::count());
+        $this->assertEquals($linkCount + count($testCases), Link::count());
     }
 
     public function test_resource_type_is_required_when_creating_a_resource()
@@ -149,6 +174,9 @@ class ResourceManagementTest extends TestCase
 
     public function test_links_resource_creation_fails_with_invalid_data()
     {
+        $resourceCount = Resource::count();
+        $linkCount = Link::count();
+
         $testCases = [
             ['data' => ['link' => 'https:\/invalidUrl', 'title' => 'hello world', 'opens_in_new_tab' => true, 'resource_type' => 'link' ], 'errors' => [ 'link' => ['The link must be a valid URL.']] ],
             ['data' => ['link' => 'https://averyveryveryverylongurlasdadasdasdasdasdasdadsasdasdasdasdaaasdadasdiahidhaiodaoidhioashdioahsdohaoudihaoshdioashdoihasiodhashsdioahdiohasiodhoashdoihaoidhioashdiasdjajsdiajdiajdsjajsdiasjdiajsdasidjaijsdaijdsiasjdiajsdajsdiajsdiajsdiajsdoahdioahodshaodhioashdoahsoidhaohdsouahsdouhasodhoasd.com', 'title' => 'hello world', 'opens_in_new_tab' => true, 'resource_type' => 'link'], 'errors' => ['link' => ['The link must not be greater than 250 characters.']]],
@@ -164,6 +192,9 @@ class ResourceManagementTest extends TestCase
                 ->assertJson(['errors' => $testCase['errors']])
                 ->assertStatus(422);
         }
+
+        $this->assertEquals($resourceCount,Resource::count());
+        $this->assertEquals($linkCount,Link::count());
     }
 
 }
