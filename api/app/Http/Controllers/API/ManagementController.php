@@ -4,8 +4,8 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateResourceRequest;
-use App\Http\Resources\SingleResource;
 use App\Models\Resource;
+use Symfony\Component\HttpFoundation\Response;
 
 class ManagementController extends Controller
 {
@@ -16,16 +16,13 @@ class ManagementController extends Controller
     {
         $data = $request->validated();
 
-        // TODO use laravel api resources
-        $createdResource = Resource::createResource($data);
+        $resource = Resource::createResource($data);
 
-//        $json = (new SingleResource($createdResource))->toJson();
 
         return response()->json([
-            'success' => true,
-            'message' => 'resource created successfully.',
-//            $json
-            'resource' => $createdResource,
-        ],201);
+            'success'  => true,
+            'message'  => 'resource created successfully.',
+            'resource' => $resource,
+        ], Response::HTTP_CREATED);
     }
 }
