@@ -42,7 +42,7 @@ class CreateResourceRequest extends FormRequest
             $this->getResourceCreationRules(
                 $this->request->get('resource_type')
             ),
-            ['title' => 'required|string|max:150'],
+            ['title' => 'required|string|max:255'],
             $resourceTypeRule,
         );
     }
@@ -51,12 +51,12 @@ class CreateResourceRequest extends FormRequest
     {
         return ([
             Resource::RESOURCE_LINK => [
-                'link'             => 'required|url|max:250',
+                'link'             => 'required|url|max:255',
                 'opens_in_new_tab' => 'required|boolean',
             ],
             Resource::RESOURCE_HTML_SNIPPET => [
-                'description' => 'required|string|255',
-                'markup'      => 'required|string|1000',
+                'description' => 'required|string|max:255',
+                'markup'      => 'required|string|max:1000',
             ],
             Resource::RESOURCE_FILE => [
                 'file' => 'required|file|mimes:pdf|max:5120'

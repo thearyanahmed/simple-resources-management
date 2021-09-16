@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
+/**
+ * @property integer $id
+ * @property string $resourceable_type
+ * @method static create(array $resourceData)
+ */
 class Resource extends Model
 {
     use HasFactory;
@@ -38,9 +43,9 @@ class Resource extends Model
     public function getResourceTypeAttribute(): string
     {
         return ([
-            Link::class => Resource::RESOURCE_LINK,
-            File::class => Resource::RESOURCE_FILE,
-//            Link::class => Resource::RESOURCE_HTML_SNIPPET,
+            Link::class        => Resource::RESOURCE_LINK,
+            File::class        => Resource::RESOURCE_FILE,
+            HtmlSnippet::class => Resource::RESOURCE_HTML_SNIPPET,
         ])[$this->resourceable_type];
     }
 }

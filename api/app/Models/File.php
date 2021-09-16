@@ -22,9 +22,4 @@ class File extends Model
         return $this->morphOne(Resource::class, 'resourceable');
     }
 
-    public static function store()
-    {
-
-        dd('implement file store');
-    }
 }

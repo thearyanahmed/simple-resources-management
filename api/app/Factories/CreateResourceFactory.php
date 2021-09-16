@@ -3,6 +3,7 @@
 namespace App\Factories;
 
 use App\Models\File;
+use App\Models\HtmlSnippet;
 use App\Models\Link;
 use App\Models\Resource;
 use Exception;
@@ -42,7 +43,7 @@ class CreateResourceFactory
         return ([
             Resource::RESOURCE_LINK         => Link::class,
             Resource::RESOURCE_FILE         => File::class,
-            Resource::RESOURCE_HTML_SNIPPET => Link::class,
+            Resource::RESOURCE_HTML_SNIPPET => HtmlSnippet::class,
         ])[$relatedResourceType];
     }
 
@@ -114,8 +115,7 @@ class CreateResourceFactory
             return $this->createFile();
         }
 
-        // todo change link:class to html markup
-        if($this->relatedResourceModel::class === Link::class) {
+        if($this->relatedResourceModel::class === HtmlSnippet::class) {
             return $this->createHtmLSnippet();
         }
 
@@ -133,11 +133,10 @@ class CreateResourceFactory
         return File::make();
     }
 
-    // TODO change return type
-    private function createHtmLSnippet() : File
+    private function createHtmLSnippet() : HtmlSnippet
     {
         // todo change creation
-        return File::make();
+        return HtmlSnippet::make();
     }
 
 }

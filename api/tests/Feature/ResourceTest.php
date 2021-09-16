@@ -12,7 +12,7 @@ class ResourceTest extends TestCase
 {
     use RefreshDatabase;
 
-    public $authHeader = ['user_email' => 'admin@admin.com'];
+    public array $adminAuthHeader = ['user_email' => 'admin@admin.com'];
 
     public function test_admin_routes_can_not_be_accessed_unless_user_is_admin()
     {
@@ -34,7 +34,7 @@ class ResourceTest extends TestCase
         ];
 
         foreach($routeMap as $method => $endpoint) {
-            $response = $this->json($method,$endpoint,[],$this->authHeader);
+            $response = $this->json($method,$endpoint,[],$this->adminAuthHeader);
             $response->assertStatus(200);
         }
     }
@@ -72,7 +72,7 @@ class ResourceTest extends TestCase
         ];
 
         foreach($testCases as $testCaseData) {
-            $response = $this->json('post',route('resources.store'),$testCaseData,$this->authHeader);
+            $response = $this->json('post',route('resources.store'),$testCaseData,$this->adminAuthHeader);
 
             $resourceShouldBe = [
                 'title' => $testCaseData['title'],
@@ -119,7 +119,7 @@ class ResourceTest extends TestCase
             'opens_in_new_tab' => true,
         ];
 
-        $response = $this->json('post',route('resources.store'),$data,$this->authHeader);
+        $response = $this->json('post',route('resources.store'),$data,$this->adminAuthHeader);
 
         $response
             ->assertJson([
@@ -131,7 +131,7 @@ class ResourceTest extends TestCase
 
         $data['resource_type'] = 'link';
 
-        $response = $this->json('post',route('resources.store'),$data,$this->authHeader);
+        $response = $this->json('post',route('resources.store'),$data,$this->adminAuthHeader);
 
         $response->assertStatus(201);
     }
@@ -146,7 +146,7 @@ class ResourceTest extends TestCase
             'resource_type'    => 'link',
         ];
 
-        $response = $this->json('post',route('resources.store'),$data,$this->authHeader);
+        $response = $this->json('post',route('resources.store'),$data,$this->adminAuthHeader);
 
         $response
             ->assertJson([
@@ -161,7 +161,7 @@ class ResourceTest extends TestCase
         $data['link'] = 'invalid-link';
         $data['title'] = 'hello world';
 
-        $response = $this->json('post',route('resources.store'),$data,$this->authHeader);
+        $response = $this->json('post',route('resources.store'),$data,$this->adminAuthHeader);
 
         $response
             ->assertJson([
@@ -186,7 +186,7 @@ class ResourceTest extends TestCase
         ];
 
         foreach($testCases as $testCase) {
-            $response = $this->json('post',route('resources.store'),$testCase['data'],$this->authHeader);
+            $response = $this->json('post',route('resources.store'),$testCase['data'],$this->adminAuthHeader);
 
             $response
                 ->assertJson(['errors' => $testCase['errors']])
@@ -196,5 +196,6 @@ class ResourceTest extends TestCase
         $this->assertEquals($resourceCount,Resource::count());
         $this->assertEquals($linkCount,Link::count());
     }
+
 
 }
