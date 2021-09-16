@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Resource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SingleResource extends JsonResource
@@ -16,9 +17,9 @@ class SingleResource extends JsonResource
     {
         $response = $this->resource['resource']->toArray();
 
-        $response['link'] = [];
-        $response['html_snippet'] = [];
-        $response['pdf'] = [];
+        $response[ Resource::RESOURCE_LINK ]         = [];
+        $response[ Resource::RESOURCE_PDF ]          = [];
+        $response[ Resource::RESOURCE_HTML_SNIPPET ] = [];
 
         $response[ $this->resource['resource_type'] ] = $this->resource[ $this->resource['resource_type'] ];
 

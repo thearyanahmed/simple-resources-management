@@ -44,6 +44,7 @@ class ResourceManagementTest extends TestCase
         $resourceCount = Resource::count();
         $linkCount     = Link::count();
 
+        // use loop
         $data = [
             'resource_type'   => 'link',
             'title'            => 'A test link resource.',
@@ -67,7 +68,6 @@ class ResourceManagementTest extends TestCase
     public function test_resource_type_is_required_when_creating_a_resource()
     {
         $data = [
-//            'resource_type'   => 'link',
             'title'            => 'A test link resource.',
             'link'             => 'https://thearyanahmed.com',
             'opens_in_new_tab' => true,

@@ -12,6 +12,10 @@ class Resource extends Model
 {
     use HasFactory;
 
+    const RESOURCE_LINK         = 'link';
+    const RESOURCE_PDF          = 'pdf';
+    const RESOURCE_HTML_SNIPPET = 'html_snippet';
+
     protected $casts = [
         'id' => 'int',
     ];
@@ -37,13 +41,16 @@ class Resource extends Model
         DB::beginTransaction();
 
         try {
+
+            $relatedResourceModel = self::getResourceableType($data['resource_type']);
+
             $resource = [
                 'title'             => $data['title'],
-                'resourceable_type' => self::getResourceableType($data['resource_type'])
+                'resourceable_type' => $relatedResourceModel,
             ];
 
             $relatedResourceData = Arr::except($data,['title','resource_type']);
-            $relatedResource = $resource['resourceable_type']::create($relatedResourceData);
+            $relatedResource = $relatedResourceModel::create($relatedResourceData);
 
             $resource['resourceable_id'] = $relatedResource->id;
 
