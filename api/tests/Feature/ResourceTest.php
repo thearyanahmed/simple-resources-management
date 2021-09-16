@@ -212,9 +212,9 @@ class ResourceTest extends TestCase
 
         $rounds = mt_rand(5,100);
 
-        foreach (range(1,$rounds) as $_) {
+        foreach (range(1,2) as $_) {
             $response = $this->json('post',route('resources.store'),$testData,$this->adminAuthHeader);
-
+            $response->dump();
             $response
                 ->assertJson([
                     'success' => true,
