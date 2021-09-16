@@ -75,11 +75,52 @@ class ResourceManagementTest extends TestCase
 
         $response = $this->json('post',route('resources.store'),$data,$this->authHeader);
 
-        $response->dump();
         $response
             ->assertJson([
                 'errors' => [
                     'resource_type' => ["The resource type field is required."]
+                ]
+            ])
+            ->assertStatus(422);
+
+        $data['resource_type'] = 'link';
+
+        $response = $this->json('post',route('resources.store'),$data,$this->authHeader);
+
+        $response->assertStatus(201);
+    }
+
+    public function test_resource_creation_returns_error_with_invalid_data()
+    {
+        // title, link with empty string should not be created
+        $data = [
+            'title'            => '',
+            'link'             => '',
+            'opens_in_new_tab' => true,
+            'resource_type'    => 'link',
+        ];
+
+        $response = $this->json('post',route('resources.store'),$data,$this->authHeader);
+
+        $response
+            ->assertJson([
+                'errors' => [
+                    'link' => ["The link field is required."],
+                    'title' => ["The title field is required."],
+                ]
+            ])
+            ->assertStatus(422);
+
+        // a link that is not valid should not be created
+        $data['link'] = 'invalid-link';
+        $data['title'] = 'hello world';
+
+        $response = $this->json('post',route('resources.store'),$data,$this->authHeader);
+
+        $response
+            ->assertJson([
+                'errors' => [
+                    'link' => ['The link must be a valid URL.']
                 ]
             ])
             ->assertStatus(422);

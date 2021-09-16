@@ -59,7 +59,7 @@ class Resource extends Model
 
             DB::commit();
 
-            // need DTO ?
+            // use DTO ?
             return [
                 'resource'             => $resource,
                 $data['resource_type'] => $relatedResource,
