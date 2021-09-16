@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Factories\CreateResourceFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateResourceRequest;
 use App\Models\Resource;
@@ -18,7 +19,8 @@ class ManagementController extends Controller
     {
         $data = $request->validated();
 
-        $resource = Resource::createResource($data);
+//        $resource = Resource::createResource($data);
+        $resource = (new CreateResourceFactory($data))->create();
 
         return response()->json([
             'success'  => true,
