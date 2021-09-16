@@ -2,15 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Models\HtmlSnippet;
 use App\Models\Link;
 use App\Models\Resource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Nette\Utils\Html;
 use Tests\TestCase;
 
 class ResourceTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
     public array $adminAuthHeader = ['user_email' => 'admin@admin.com'];
 
@@ -197,5 +199,49 @@ class ResourceTest extends TestCase
         $this->assertEquals($linkCount,Link::count());
     }
 
+    public function test_html_snippet_resource_can_be_created()
+    {
+        $resourceCount = Resource::count();
+        $htmlSnippetCount = HtmlSnippet::count();
+
+        $testData = [
+            'title'         => $this->faker->text(mt_rand(5,255)),
+            'description'   => $this->faker->text(mt_rand(5,255)),
+            'markup'        => $this->faker->randomHtml(5,5),
+            'resource_type' => 'html_snippet'
+        ];
+
+        $rounds = mt_rand(5,100);
+
+        foreach (range(0,$rounds) as $_) {
+            $response = $this->json('post',route('resources.store'),$testData,$this->adminAuthHeader);
+
+            $response
+                ->assertJson([
+                    'success' => true,
+                    'message' => 'resource created successfully.',
+//                    'resource' => $resourceShouldBe
+                ])
+                ->assertJsonStructure([
+                    'success',
+                    'message',
+                    'resource' => [
+                        'title',
+                        'resource_type',
+//                        'link' => [
+//                            'link',
+//                            'opens_in_new_tab'
+//                        ],
+                        'id',
+                        'created_at',
+                        'updated_at'
+                    ]
+                ])
+                ->assertStatus(201);
+        }
+
+        $this->assertEquals($resourceCount + $rounds, Resource::count());
+        $this->assertEquals($htmlSnippetCount + $rounds, HtmlSnippet::count());
+    }
 
 }
