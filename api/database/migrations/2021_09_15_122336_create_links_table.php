@@ -15,7 +15,7 @@ class CreateLinksTable extends Migration
     {
         Schema::create('links', function (Blueprint $table) {
             $table->id();
-            $table->string('link');
+            $table->string('link'); // todo should have named it something better
             $table->boolean('opens_in_new_tab');
             $table->timestamps();
         });

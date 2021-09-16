@@ -54,6 +54,7 @@ class ResourceManagementTest extends TestCase
 
         $response = $this->json('post',route('resources.store'),$data,$this->authHeader);
 
+        $response->dump();
         $response
             ->assertJson([
                 'success' => true,

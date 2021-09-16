@@ -31,12 +31,12 @@ class Resource extends Model
 
     /**
      * @param array $data
-     * @return array
+     * @return Resource
      * Use DTO? overkill?
      * Set it in a service layer? no?
      * @throws Throwable
      */
-    public static function createResource(array $data): array
+    public static function createResource(array $data): Resource
     {
         // db transaction
         DB::beginTransaction();
@@ -59,12 +59,9 @@ class Resource extends Model
 
             DB::commit();
 
+            $resource->{$data['resource_type']} = $relatedResource;
             // use DTO ?
-            return [
-                'resource'             => $resource,
-                $data['resource_type'] => $relatedResource,
-                'resource_type'        => $data['resource_type'],
-            ];
+            return $resource;
 
         } catch (Throwable $e) {
             DB::rollback();

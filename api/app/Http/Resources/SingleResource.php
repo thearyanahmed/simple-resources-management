@@ -17,9 +17,13 @@ class SingleResource extends JsonResource
     {
         $response = $this->resource['resource']->toArray();
 
-        $response[ Resource::RESOURCE_LINK ]         = [];
-        $response[ Resource::RESOURCE_PDF ]          = [];
-        $response[ Resource::RESOURCE_HTML_SNIPPET ] = [];
+        unset($response['resourceable_type']); // unset ?
+
+//        $emptyObject = (object) []; // send empty objects?
+
+//        $response[ Resource::RESOURCE_LINK ]         = $emptyObject; // using this unless the response would have array for
+//        $response[ Resource::RESOURCE_PDF ]          = $emptyObject;
+//        $response[ Resource::RESOURCE_HTML_SNIPPET ] = $emptyObject;
 
         $response[ $this->resource['resource_type'] ] = $this->resource[ $this->resource['resource_type'] ];
 
