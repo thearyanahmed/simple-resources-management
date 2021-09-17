@@ -462,11 +462,31 @@ class ResourceTest extends TestCase
 
     public function test_a_pdf_file_resource_is_downloadable()
     {
+        $files = Resource::with('resourceable')->isFile()->get();
+
+        foreach($files as $resource) {
+            $res = $this->json('post',route('resources.download',$resource->id),[],[]);
+
+            $res->assertDownload($res->resourceable->path);
+        }
 
     }
 
     public function test_a_non_pdf_file_resource_returns_422_when_requested_for_download()
     {
-        $this->markTestSkipped('implement');
+        $links = Resource::isLink()->get();
+        $html = Resource::isHtmlSnippet()->get();
+
+        $links->merge($html)
+            ->each(function ($resource) {
+                $res = $this->json('post',route('resources.download',$resource->id),[],[]);
+
+                $res
+                    ->assertJson([
+                        'success' => false,
+                        'message' => 'resource is not a downloadable type.'
+                    ])
+                    ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+            });
     }
 }

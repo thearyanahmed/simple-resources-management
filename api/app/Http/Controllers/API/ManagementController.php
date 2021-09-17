@@ -8,14 +8,15 @@ use App\Http\Requests\CreateResourceRequest;
 use App\Http\Resources\DeleteResourceResponse;
 use App\Http\Resources\SingleResourceCreatedResponse;
 use App\Models\Resource;
+use App\Traits\ValidatesIdFromRouteParameter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class ManagementController extends Controller
 {
+    use ValidatesIdFromRouteParameter;
     /**
      * @throws Throwable
      */
@@ -32,13 +33,9 @@ class ManagementController extends Controller
 
     public function destroy($id)
     {
-        $validator = Validator::make(['id' => $id],[
-            'id' => 'required|numeric'
-        ]);
+        abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND);
 
-        abort_if($validator->fails(),404);
-
-        $resource = Resource::with('resourceable')->find($id);
+        $resource = Resource::find($id);
 
         abort_if(empty($resource), 404);
 

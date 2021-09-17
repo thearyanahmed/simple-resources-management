@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property string $resourceable_type
  * @property string $type
  * @method static create(array $resourceData)
+ * @method static isHtmlSnippet()
+ * @method static isLink()
  */
 class Resource extends Model
 {
@@ -64,4 +66,10 @@ class Resource extends Model
     {
         return $query->where('resourceable_type',HtmlSnippet::class);
     }
+
+    public function isTypeOf(string $type) : bool
+    {
+        return $this->type === $type;
+    }
+
 }
