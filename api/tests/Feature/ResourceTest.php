@@ -343,8 +343,24 @@ class ResourceTest extends TestCase
     public function test_a_resource_can_be_deleted()
     {
         // write seeders for resources to create a bunch of resources
+        collect([
+                Link::class, HtmlSnippet::class, // File::class,
+            ])
+            ->each(function ($model){
+                $model::factory()->count(100)->create()->each(function ($link) use ($model) {
+                    Resource::factory()->count(1)->create([
+                        'resourceable_type' => $model,
+                        'resourceable_id'   => $link->id
+                    ]);
+                });
+            });
 
-        
+        $resources = Resource::with('resourceable')->inRandomOrder()->take(10)->select('id')->get();
+
+        $resources->each(function ($resource){
+            // hit delete request
+            dd($resource->link,$resource->html_snippet);
+        });
 
         // match resource count
         // match related resource count

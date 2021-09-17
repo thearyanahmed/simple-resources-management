@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Link extends Model
 {
@@ -21,7 +22,7 @@ class Link extends Model
         'opens_in_new_tab' => 'boolean'
     ];
 
-    public function resource()
+    public function resource(): MorphOne
     {
         return $this->morphOne(Resource::class, 'resourceable');
     }

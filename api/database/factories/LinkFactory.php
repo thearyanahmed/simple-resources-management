@@ -23,7 +23,8 @@ class LinkFactory extends Factory
     public function definition()
     {
         return [
-            'link' => Str::of($this->faker->url)->limit(255),
+            'link' => Str::of($this->faker->url())->limit(255),
+            'opens_in_new_tab' => $this->faker->boolean
         ];
     }
 }
