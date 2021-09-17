@@ -415,7 +415,9 @@ class ResourceTest extends TestCase
     {
         $resource = Resource::first();
 
-        $response = $this->json('get',route('resources.view',$resource->id),[],[]);
+        $response = $this->json('get',route('resources.show',$resource->id),[],[]);
+
+        $response->dump();
 
         $response
             ->assertJsonStructure([

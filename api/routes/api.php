@@ -2,11 +2,12 @@
 
 use App\Http\Controllers\API\HeartBeat;
 use App\Http\Controllers\API\ManagementController;
+use App\Http\Controllers\API\VisitorController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/heartbeat', HeartBeat::class);
 
-//Route::get('/resources/{id}',[Man]);
+Route::get('/resources/{resource}',[VisitorController::class,'show'])->name('resources.show');
 
 Route::middleware('admin')->group(function(){
     // todo handle, change test endpoints
