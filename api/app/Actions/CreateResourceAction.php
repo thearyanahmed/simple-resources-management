@@ -1,23 +1,19 @@
 <?php
 
-namespace App\Factories;
+namespace App\Actions;
 
-use App\Models\File;
-use App\Models\HtmlSnippet;
-use App\Models\Link;
-use App\Models\Resource;
-use Exception;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Throwable;
+use Exception;
+use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\{DB,Storage};
+use App\Models\{File,HtmlSnippet,Link,Resource};
 
-class CreateResourceFactory
+class CreateResourceAction
 {
     protected string $relatedResourceType;
 
+    protected Resource $resource;
     protected Model $relatedResourceModel;
     protected array $relatedResourceData;
 
@@ -100,7 +96,7 @@ class CreateResourceFactory
 
     /**
      * @return Model
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     private function createRelatedResource() : Model
     {
@@ -124,6 +120,11 @@ class CreateResourceFactory
         return Link::create($this->relatedResourceData);
     }
 
+    private function createHtmLSnippet() : HtmlSnippet
+    {
+        return HtmlSnippet::create($this->relatedResourceData);
+    }
+
     /**
      * @throws Exception
      * @throws Throwable
@@ -134,7 +135,7 @@ class CreateResourceFactory
 
         $dir = config('filesystems.file_dir');
 
-        $uploadedFilePath = Storage::disk($disk)->put($dir ,$this->relatedResourceData['file']);
+        $uploadedFilePath = $this->uploadFile($disk,$dir);
 
         $url = Storage::url($uploadedFilePath);
 
@@ -145,9 +146,10 @@ class CreateResourceFactory
         ]);
     }
 
-    private function createHtmLSnippet() : HtmlSnippet
+    private function uploadFile(string $disk, string $dir)
     {
-        return HtmlSnippet::create($this->relatedResourceData);
+        return Storage::disk($disk)->put($dir ,$this->relatedResourceData['file']);
     }
+
 
 }

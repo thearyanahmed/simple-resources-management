@@ -22,7 +22,6 @@ class ResourceTest extends TestCase
 
         Storage::fake('local');
 
-        // todo enable all classes
         collect([
                 Link::class, HtmlSnippet::class, File::class,
             ])
@@ -48,6 +47,7 @@ class ResourceTest extends TestCase
             $response->assertStatus(Response::HTTP_UNAUTHORIZED);
         }
 
+        // with authentication header
         foreach($routeMap as $method => $endpoint) {
             $response = $this->json($method,$endpoint,[],$this->adminAuthHeader);
             $response->assertStatus(Response::HTTP_OK);
@@ -498,7 +498,6 @@ class ResourceTest extends TestCase
 
     }
 
-
     public function test_a_non_pdf_file_resource_returns_422_when_requested_for_download()
     {
         $links = Resource::isLink()->get();
@@ -517,5 +516,8 @@ class ResourceTest extends TestCase
             });
     }
 
+    public function test_a_resource_can_be_edited()
+    {
 
+    }
 }

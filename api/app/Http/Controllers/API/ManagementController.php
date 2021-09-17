@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Factories\CreateResourceFactory;
+use App\Actions\CreateResourceAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateResourceRequest;
 use App\Http\Resources\DeleteResourceResponse;
@@ -24,7 +24,7 @@ class ManagementController extends Controller
     {
         $data = $request->validated();
 
-        $resource = (new CreateResourceFactory($data))->create();
+        $resource = (new CreateResourceAction($data))->create();
 
         $res = new SingleResourceCreatedResponse($resource);
 
