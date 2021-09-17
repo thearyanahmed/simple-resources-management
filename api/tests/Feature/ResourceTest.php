@@ -158,48 +158,13 @@ class ResourceTest extends TestCase
         $response->assertStatus(Response::HTTP_CREATED);
     }
 
-    public function test_resource_creation_returns_error_with_invalid_data()
-    {
-        // title, link with empty string should not be created
-        $data = [
-            'title'            => '',
-            'link'             => '',
-            'opens_in_new_tab' => true,
-            'resource_type'    => 'link',
-        ];
-
-        $response = $this->json('post',route('resources.store'),$data,$this->adminAuthHeader);
-
-        $response
-            ->assertJson([
-                'errors' => [
-                    'link' => ["The link field is required."],
-                    'title' => ["The title field is required."],
-                ]
-            ])
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-
-        // a link that is not valid should not be created
-        $data['link'] = 'invalid-link';
-        $data['title'] = 'hello world';
-
-        $response = $this->json('post',route('resources.store'),$data,$this->adminAuthHeader);
-
-        $response
-            ->assertJson([
-                'errors' => [
-                    'link' => ['The link must be a valid URL.']
-                ]
-            ])
-            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-    }
-
     public function test_links_resource_creation_fails_with_invalid_data()
     {
         $resourceCount = Resource::count();
         $linkCount = Link::count();
 
         $testCases = [
+            ['data' => ['link' => '', 'title' => '', 'opens_in_new_tab' => true, 'resource_type' => 'link' ], 'errors' => [ 'title' => ['The title field is required.'],'link' => ['The link field is required.']]],
             ['data' => ['link' => 'https:\/invalidUrl', 'title' => 'hello world', 'opens_in_new_tab' => true, 'resource_type' => 'link' ], 'errors' => [ 'link' => ['The link must be a valid URL.']] ],
             ['data' => ['link' => 'https://averyveryveryverylongurlasdadasdasdasdasdasdadsasdasdasdasdaaasdadasdiahidhaiodaoidhioashdioahsdohaoudihaoshdioashdoihasiodhashsdioahdiohasiodhoashdoihaoidhioashdiasdjajsdiajdiajdsjajsdiasjdiajsdasidjaijsdaijdsiasjdiajsdajsdiajsdiajsdiajsdoahdioahodshaodhioashdoahsoidhaohdsouahsdouhasodhoasd.com', 'title' => 'hello world', 'opens_in_new_tab' => true, 'resource_type' => 'link'], 'errors' => ['link' => ['The link must not be greater than 255 characters.']]],
             ['data' => ['link' => 'https://hello.com', 'title' => 'hello world', 'opens_in_new_tab' => 'invalid boolean', 'resource_type' => 'link'], 'errors' => ['opens_in_new_tab' => ['The opens in new tab field must be true or false.']]],
@@ -415,7 +380,6 @@ class ResourceTest extends TestCase
                 'type'
             ])
             ->assertStatus(Response::HTTP_OK);
-
     }
 
     public function test_it_returns_a_404_when_non_existent_or_invalid_resource_id_is_requested()
@@ -487,4 +451,6 @@ class ResourceTest extends TestCase
                     ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
             });
     }
+
+
 }
