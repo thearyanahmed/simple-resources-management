@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Factories\CreateResourceFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateResourceRequest;
+use App\Http\Resources\SingleResourceCreatedResponse;
 use App\Models\Resource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -23,11 +24,9 @@ class ManagementController extends Controller
 
         $resource = (new CreateResourceFactory($data))->create();
 
-        return response()->json([
-            'success'  => true,
-            'message'  => 'resource created successfully.',
-            'resource' => $resource,
-        ], Response::HTTP_CREATED);
+        $res = new SingleResourceCreatedResponse($resource);
+
+        return response()->json($res, Response::HTTP_CREATED);
     }
 
     public function destroy(Resource $resource)

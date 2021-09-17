@@ -69,10 +69,6 @@ class CreateResourceFactory
             // commit the transaction
             DB::commit();
 
-            // assign related resource with specific key
-            $resource->{$this->relatedResourceType} = $relatedResource;
-
-            //TODO [improvement?] use DTO ?
             return $resource;
 
         } catch (Throwable $e) {
