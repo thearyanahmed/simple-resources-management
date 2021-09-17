@@ -2,13 +2,13 @@
 
 namespace App\Actions;
 
-use Throwable;
-use Exception;
-use Illuminate\Support\Arr;
+use App\Models\Resource;
 use App\Mutators\ResourceMutator;
-use Illuminate\Support\Facades\DB;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\{File,HtmlSnippet,Link,Resource};
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class EditResourceAction extends ResourceMutator
 {
@@ -35,6 +35,11 @@ class EditResourceAction extends ResourceMutator
         $this->resourceData = ['title' => $formData['title']];
     }
 
+    /**
+     * @param Resource $resource
+     * @return Resource
+     * @throws Throwable
+     */
     public function edit(Resource $resource) : Resource
     {
         DB::beginTransaction();
@@ -47,6 +52,8 @@ class EditResourceAction extends ResourceMutator
             // commit the transaction
             DB::commit();
 
+            $resource->fresh('resourceable');
+
             return $resource;
 
         } catch (Throwable $e) {
@@ -55,35 +62,34 @@ class EditResourceAction extends ResourceMutator
         }
     }
 
-    private function updateRelatedResource() : Model
+    /**
+     * @throws Exception
+     */
+    private function updateRelatedResource() : void
     {
-        if($this->resource->type === Resource::RESOURCE_LINK) {
-            return $this->updateLink();
-        }
-
-        if($this->resource->type === Resource::RESOURCE_FILE) {
-            return $this->updateFile();
-        }
-
-        if($this->resource->type === Resource::RESOURCE_HTML_SNIPPET) {
-            return $this->updateHtmLSnippet();
+        if($this->resource->type === Resource::RESOURCE_LINK || $this->resource->type === Resource::RESOURCE_HTML_SNIPPET) {
+            $this->relatedResource->update($this->relatedResourceData);
+        } elseif ($this->resource->type === Resource::RESOURCE_FILE) {
+            $this->updateFile();
         }
 
         throw new Exception('unsupported resource');
     }
 
-    private function updateLink()
+    private function updateFile() : void
     {
-        return Link::make();
-    }
+        $disk = config('filesystems.default');
 
-    private function updateFile()
-    {
-        return File::make();
-    }
+        $dir = config('filesystems.file_dir');
 
-    private function updateHtmLSnippet()
-    {
-        return HtmlSnippet::make();
+        $uploadedFilePath = $this->uploadFile($disk,$dir, $this->relatedResourceData['file']);
+
+        $url = $this->fileUrl($uploadedFilePath);
+
+        $this->relatedResource->update([
+            'disk' => $disk,
+            'path' => $uploadedFilePath,
+            'abs_url' => $url
+        ]);
     }
 }

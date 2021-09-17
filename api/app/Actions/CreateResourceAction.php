@@ -2,13 +2,13 @@
 
 namespace App\Actions;
 
-use Throwable;
-use Exception;
-use Illuminate\Support\Arr;
+use App\Models\{File, HtmlSnippet, Link, Resource};
 use App\Mutators\ResourceMutator;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use App\Models\{File,HtmlSnippet,Link,Resource};
+use Throwable;
 
 class CreateResourceAction extends ResourceMutator
 {

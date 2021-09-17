@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Actions\CreateResourceAction;
+use App\Actions\DeleteResourceAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateResourceRequest;
 use App\Http\Resources\DeleteResourceResponse;
@@ -39,23 +40,10 @@ class ManagementController extends Controller
 
         abort_if(empty($resource), 404);
 
-        DB::beginTransaction();
+        (new DeleteResourceAction($resource))->delete();
 
-        try {
+        $res = new DeleteResourceResponse(null);
 
-            $resource->resourceable()->delete();
-            $resource->delete();
-
-            DB::commit();
-
-            $res = new DeleteResourceResponse(null);
-
-            return response()->json($res,Response::HTTP_OK);
-
-        } catch (\Throwable $e) {
-            DB::rollBack();
-
-            throw $e;
-        }
+        return response()->json($res,Response::HTTP_OK);
     }
 }
