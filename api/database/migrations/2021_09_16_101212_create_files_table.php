@@ -19,7 +19,9 @@ class CreateFilesTable extends Migration
 //            do we need metadata?
 //            $table->text('meta')->comment('file metadata');
 
-            $table->string('abs_path');
+            $table->string('abs_url',255)->comment('absolute url');
+            $table->string('path',255)->comment('path relative to hosting server');
+            $table->string('disk',100);
 
             // do we need timestamps?
             $table->timestamps();

@@ -10,11 +10,11 @@ class File extends Model
     use HasFactory;
 
     protected $fillable = [
-        'abs_path'
+        'abs_url','path','disk',
     ];
 
     protected $hidden = [
-        'id', 'created_at','updated_at'
+        'id', 'created_at','updated_at','disk',
     ];
 
     public function resource()

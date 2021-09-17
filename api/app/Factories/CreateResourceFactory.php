@@ -10,6 +10,8 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Throwable;
 
 class CreateResourceFactory
@@ -126,10 +128,25 @@ class CreateResourceFactory
         return Link::create($this->relatedResourceData);
     }
 
+    /**
+     * @throws Exception
+     * @throws Throwable
+     */
     private function createFile() : File
     {
-        // todo handle file upload
-        return File::make();
+        $disk = config('filesystems.default');
+
+        $dir = 'resources/pdfs';
+
+        $uploadedFilePath = Storage::disk($disk)->put($dir ,$this->relatedResourceData['file']);
+
+        $url = Storage::url($uploadedFilePath);
+
+        return File::create([
+            'disk'    => $disk,
+            'path'    => $uploadedFilePath,
+            'abs_url' => $url
+        ]);
     }
 
     private function createHtmLSnippet() : HtmlSnippet

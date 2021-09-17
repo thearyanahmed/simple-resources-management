@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\File;
 use App\Models\HtmlSnippet;
 use App\Models\Link;
 use App\Models\Resource;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Nette\Utils\Html;
 use Tests\TestCase;
 
@@ -284,5 +286,57 @@ class ResourceTest extends TestCase
 
         $this->assertEquals($resourceCount + $rounds, Resource::count());
         $this->assertEquals($htmlSnippetCount + $rounds, HtmlSnippet::count());
+    }
+
+    public function test_file_resource_can_be_created()
+    {
+        $resourceCount = Resource::count();
+        $fileCount = File::count();
+
+        $rounds = mt_rand(2, 3);
+
+        foreach (range(1, $rounds) as $_) {
+            $testData = [
+                'title' => $this->faker->realTextBetween(5, 250),
+                'resource_type' => 'file',
+                'file' => UploadedFile::fake()->image('test.pdf')
+            ];
+
+            $response = $this->json('post',route('resources.store'),$testData,$this->adminAuthHeader);
+
+            $resourceShouldBe = [
+                'title' => $testData['title'],
+                'resource_type' => 'file',
+                'file' => [] // file abs_path being checked with assertFileExists
+            ];
+
+            $response
+                ->assertJson([
+                    'success'  => true,
+                    'message'  => 'resource created successfully.',
+                    'resource' => $resourceShouldBe
+                ])
+                ->assertJsonStructure([
+                    'success',
+                    'message',
+                    'resource' => [
+                        'title',
+                        'resource_type',
+                        'file' => [
+                            'abs_url',
+                            'path'
+                        ],
+                        'id',
+                        'created_at',
+                        'updated_at'
+                    ],
+                ])
+                ->assertStatus(201);
+
+            $this->assertFileExists($response->decodeResponseJson()['resource']['file']['path']);
+        }
+
+        $this->assertEquals($resourceCount + $rounds, Resource::count());
+        $this->assertEquals($fileCount + $rounds, File::count());
     }
 }
