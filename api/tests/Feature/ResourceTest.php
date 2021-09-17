@@ -408,7 +408,38 @@ class ResourceTest extends TestCase
 
     public function test_a_resource_can_be_viewed()
     {
-        $this->markTestSkipped();
+        $resource = Resource::first();
+
+        $response = $this->json('get',route('resources.show',$resource->id),[],[]);
+
+        $response
+            ->assertJsonStructure([
+                'title',
+                'id',
+                'type'
+            ])
+            ->assertStatus(Response::HTTP_OK);
+
+    }
+
+    public function test_it_returns_a_404_when_non_existent_or_invalid_resource_id_is_requested()
+    {
+        $invalidIds = [
+            '\r\n',
+            '-',
+            '+',
+            UploadedFile::fake()->create('invalid_file.png'),
+            '!@#',
+            'invalid id',
+            '/[0-9]+[a-z0-9]?$/',
+            Resource::count() + mt_rand(10,1000)
+        ];
+
+        foreach ($invalidIds as $id) {
+            $response = $this->json('get',route('resources.show',$id),[],[]);
+
+            $response->assertStatus(Response::HTTP_NOT_FOUND);
+        }
     }
 
     public function test_a_resource_can_be_viewed_by_anyone()
@@ -427,5 +458,15 @@ class ResourceTest extends TestCase
                 ])
                 ->assertStatus(Response::HTTP_OK);
         }
+    }
+
+    public function test_a_pdf_file_resource_is_downloadable()
+    {
+
+    }
+
+    public function test_a_non_pdf_file_resource_returns_422_when_requested_for_download()
+    {
+        $this->markTestSkipped('implement');
     }
 }

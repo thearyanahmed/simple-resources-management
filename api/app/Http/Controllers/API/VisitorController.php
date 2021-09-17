@@ -5,14 +5,22 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SingleResourceResponse;
 use App\Models\Resource;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 class VisitorController extends Controller
 {
-    public function show(Resource $resource)
+    public function show($id)
     {
-        $resource->load('resourceable');
+        $validator = Validator::make(['id' => $id],[
+            'id' => 'required|numeric'
+        ]);
+
+        abort_if($validator->fails(),404);
+
+        $resource = Resource::with('resourceable')->find($id);
+
+        abort_if(empty($resource), 404);
 
         $res = new SingleResourceResponse($resource);
 

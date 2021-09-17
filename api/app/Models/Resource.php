@@ -49,4 +49,19 @@ class Resource extends Model
             HtmlSnippet::class => Resource::RESOURCE_HTML_SNIPPET,
         ])[$this->resourceable_type];
     }
+
+    public function scopeIsLink($query)
+    {
+        return $query->where('resourceable_type',Link::class);
+    }
+
+    public function scopeIsFile($query)
+    {
+        return $query->where('resourceable_type',File::class);
+    }
+
+    public function scopeIsHtmlSnippet($query)
+    {
+        return $query->where('resourceable_type',HtmlSnippet::class);
+    }
 }

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/heartbeat', HeartBeat::class);
 
-Route::get('/resources/{resource}',[VisitorController::class,'show'])->name('resources.show');
+Route::get('/resources/{id}',[VisitorController::class,'show'])->name('resources.show');
 
 Route::middleware('admin')->group(function(){
     // todo handle, change test endpoints
