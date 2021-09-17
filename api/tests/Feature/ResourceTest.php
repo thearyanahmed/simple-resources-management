@@ -236,7 +236,7 @@ class ResourceTest extends TestCase
 
     public function test_html_snippet_resource_can_be_created()
     {
-        $resourceCount = Resource::count();
+        $resourceCount    = Resource::count();
         $htmlSnippetCount = HtmlSnippet::count();
 
         $rounds = mt_rand(5,50);
@@ -291,7 +291,7 @@ class ResourceTest extends TestCase
     public function test_file_resource_can_be_created()
     {
         $resourceCount = Resource::count();
-        $fileCount = File::count();
+        $fileCount     = File::count();
 
         $rounds = mt_rand(2, 3);
 
@@ -338,5 +338,14 @@ class ResourceTest extends TestCase
 
         $this->assertEquals($resourceCount + $rounds, Resource::count());
         $this->assertEquals($fileCount + $rounds, File::count());
+    }
+
+    public function test_a_resource_can_be_deleted()
+    {
+        // write seeders for resources to create a bunch of resources
+        // match resource count
+        // match related resource count
+        // hit delete endpoint
+        // match response
     }
 }
