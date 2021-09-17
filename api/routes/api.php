@@ -17,6 +17,8 @@ Route::middleware('admin')->group(function(){
     });
 
     Route::post('resources',[ManagementController::class,'store'])->name('resources.store');
+    Route::get('resources/{id}/edit',[ManagementController::class,'edit'])->name('resources.edit');
+    Route::patch('resources/{id}',[ManagementController::class,'update'])->name('resources.update');
     Route::delete('resources/{id}',[ManagementController::class,'destroy'])->name('resources.delete');
 });
 

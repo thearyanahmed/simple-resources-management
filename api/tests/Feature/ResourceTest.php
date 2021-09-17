@@ -516,8 +516,48 @@ class ResourceTest extends TestCase
             });
     }
 
-    public function test_a_resource_can_be_edited()
+    public function test_a_resource_can_be_fetched_for_edit()
     {
+        $fileResource = Resource::isFile()->first();
 
+        $this->json('get',route('resources.edit',$fileResource->id),[],$this->adminAuthHeader)
+            ->assertJson([
+                'id' => $fileResource->id,
+                'title' => $fileResource->title,
+                'type' => $fileResource->type,
+                'file' => [
+                    'abs_url' => $fileResource->file->abs_url,
+                    'path'    => $fileResource->file->path,
+                ]
+            ])
+            ->assertStatus(Response::HTTP_OK);
+
+        $linkResource = Resource::isLink()->first();
+
+        $this->json('get',route('resources.edit',$linkResource->id),[],$this->adminAuthHeader)
+            ->assertJson([
+                'id' => $linkResource->id,
+                'title' => $linkResource->title,
+                'type' => $linkResource->type,
+                'link' => [
+                    'link' => $linkResource->resourceable->link,
+                    'opens_in_new_tab'    => $linkResource->resourceable->opens_in_new_tab,
+                ]
+            ])
+            ->assertStatus(Response::HTTP_OK);
+
+        $htmlResource = Resource::isHtmlSnippet()->first();
+
+        $this->json('get',route('resources.edit',$htmlResource->id),[],$this->adminAuthHeader)
+            ->assertJson([
+                'id' => $htmlResource->id,
+                'title' => $htmlResource->title,
+                'type' => $htmlResource->type,
+                'html_snippet' => [
+                    'markup' => $htmlResource->resourceable->markup,
+                    'description'    => $htmlResource->resourceable->description,
+                ]
+            ])
+            ->assertStatus(Response::HTTP_OK);
     }
 }
