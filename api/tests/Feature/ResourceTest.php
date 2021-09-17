@@ -47,13 +47,6 @@ class ResourceTest extends TestCase
             $response = $this->json($method,$endpoint);
             $response->assertStatus(Response::HTTP_UNAUTHORIZED);
         }
-    }
-
-    public function test_management_routes_can_be_accessed_when_user_is_admin()
-    {
-        $routeMap = [
-            'get' => '/api/resources'
-        ];
 
         foreach($routeMap as $method => $endpoint) {
             $response = $this->json($method,$endpoint,[],$this->adminAuthHeader);
@@ -281,7 +274,7 @@ class ResourceTest extends TestCase
             $testData = [
                 'title' => $this->faker->realTextBetween(5, 250),
                 'resource_type' => 'file',
-                'file' => UploadedFile::fake()->image('test.pdf')
+                'file' => UploadedFile::fake()->create('test.pdf')
             ];
 
             $response = $this->json('post',route('resources.store'),$testData,$this->adminAuthHeader);
@@ -433,6 +426,78 @@ class ResourceTest extends TestCase
             $res->assertDownload( $fileName );
         }
     }
+
+    public function test_file_resource_can_not_be_created_without_pdf_file()
+    {
+        $fileExtensions = [
+            'hello.c',
+            'hello.cpp',
+            'hello.java',
+            'hello.sh',
+            'hello.mp4',
+            'hello.mp3',
+            'hello.png',
+            'hello.jpg',
+            'hello.jpeg',
+            'hello.svg',
+            'hello.docx',
+            'hello.xlsx',
+            'hello.zip',
+            'hello.gif',
+            'hello.jar',
+            'hello.dmg',
+            'hello.exe',
+            'hello.php',
+            'hello.go',
+        ];
+
+        $testData = [
+            'title' => $this->faker->realTextBetween(5, 250),
+            'resource_type' => 'file',
+        ];
+
+        foreach($fileExtensions as $fe) {
+
+            $testData['file'] = UploadedFile::fake()->create($fe);
+
+            $response = $this->json('post',route('resources.store'),$testData,$this->adminAuthHeader);
+
+            $response
+                ->assertJson([
+                    'errors' =>[
+                        'file' => ['The file must be a file of type: pdf.']
+                    ]
+                ])
+                ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
+
+    public function test_file_upload_accepts_files_upto_five_megabytes()
+    {
+        $testData = [
+            'title' => $this->faker->realTextBetween(5, 100),
+            'resource_type' => 'file',
+            'file' =>  UploadedFile::fake()->create('hello.pdf', 5123 ),
+        ];
+
+        $response = $this->json('post',route('resources.store'),$testData,$this->adminAuthHeader);
+
+        $response
+            ->assertJson([
+                'errors' =>[
+                    'file' => ['The file must not be greater than 5120 kilobytes.']
+                ]
+            ])
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+        $testData['file'] = UploadedFile::fake()->create('hello.pdf', 1234 );
+
+        $response = $this->json('post',route('resources.store'),$testData,$this->adminAuthHeader);
+
+        $response->assertStatus(Response::HTTP_CREATED);
+
+    }
+
 
     public function test_a_non_pdf_file_resource_returns_422_when_requested_for_download()
     {
