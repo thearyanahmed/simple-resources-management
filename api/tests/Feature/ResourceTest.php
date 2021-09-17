@@ -2,23 +2,19 @@
 
 namespace Tests\Feature;
 
-use App\Models\File;
-use App\Models\HtmlSnippet;
-use App\Models\Link;
-use App\Models\Resource;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
-use Tests\TestCase;
+use App\Models\{File, Link, HtmlSnippet, Resource};
+use Illuminate\Foundation\Testing\{RefreshDatabase,WithFaker};
 
 class ResourceTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
     public array $adminAuthHeader = ['user_email' => 'admin@admin.com'];
-
 
     protected function setUp(): void
     {
@@ -462,20 +458,22 @@ class ResourceTest extends TestCase
 
     public function test_a_pdf_file_resource_is_downloadable()
     {
-        $files = Resource::with('resourceable')->isFile()->get();
+        $files = Resource::with('resourceable')->isFile()->take(1)->get();
 
         foreach($files as $resource) {
             $res = $this->json('post',route('resources.download',$resource->id),[],[]);
 
-            $res->assertDownload($res->resourceable->path);
-        }
+            $fileName = Str::remove(config('filesystems.file_dir'),$resource->file->path);
+            $fileName = Str::after($fileName,"/");
 
+            $res->assertDownload( $fileName );
+        }
     }
 
     public function test_a_non_pdf_file_resource_returns_422_when_requested_for_download()
     {
         $links = Resource::isLink()->get();
-        $html = Resource::isHtmlSnippet()->get();
+        $html  = Resource::isHtmlSnippet()->get();
 
         $links->merge($html)
             ->each(function ($resource) {

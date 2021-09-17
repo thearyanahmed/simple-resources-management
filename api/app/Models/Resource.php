@@ -5,11 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * @property integer $id
  * @property string $resourceable_type
+ * @property string $title
  * @property string $type
+ * @property MorphTo resourceable
+ *
  * @method static create(array $resourceData)
  * @method static isHtmlSnippet()
  * @method static isLink()
@@ -72,4 +77,20 @@ class Resource extends Model
         return $this->type === $type;
     }
 
+    public function downloadFile(string|null $title = null, array $headers = []): StreamedResponse
+    {
+        return Storage::download($this->file->path, $title, $headers);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function file()
+    {
+        if($this->type  !== Resource::RESOURCE_FILE) {
+            throw new \Exception('attempt to access file while resource is not a file type.');
+        }
+
+        return $this->resourceable();
+    }
 }

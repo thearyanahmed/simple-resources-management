@@ -7,7 +7,11 @@ use App\Http\Resources\ResourceIsNotDownloadable;
 use App\Http\Resources\SingleResourceResponse;
 use App\Models\Resource;
 use App\Traits\ValidatesIdFromRouteParameter;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
+use Psy\Util\Json;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class VisitorController extends Controller
 {
@@ -26,7 +30,11 @@ class VisitorController extends Controller
         return response()->json($res,Response::HTTP_OK);
     }
 
-    public function download($id)
+    /**
+     * @param $id
+     * @return JsonResponse|StreamedResponse
+     */
+    public function download($id): JsonResponse|StreamedResponse
     {
         abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND);
 
@@ -40,6 +48,6 @@ class VisitorController extends Controller
             return response()->json($res,Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-
+        return $resource->downloadFile();
     }
 }
