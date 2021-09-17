@@ -26,9 +26,9 @@ class ResourceTest extends TestCase
 
         Storage::fake('local');
 
+        // todo enable all classes
         collect([
-//                Link::class, HtmlSnippet::class,
-  File::class,
+                Link::class, HtmlSnippet::class, File::class,
             ])
             ->each(function ($model){
                 $model::factory()->count(100)->create()->each(function ($link) use ($model) {
@@ -49,7 +49,7 @@ class ResourceTest extends TestCase
 
         foreach($routeMap as $method => $endpoint) {
             $response = $this->json($method,$endpoint);
-            $response->assertStatus(401);
+            $response->assertStatus(Response::HTTP_UNAUTHORIZED);
         }
     }
 
@@ -61,7 +61,7 @@ class ResourceTest extends TestCase
 
         foreach($routeMap as $method => $endpoint) {
             $response = $this->json($method,$endpoint,[],$this->adminAuthHeader);
-            $response->assertStatus(200);
+            $response->assertStatus(Response::HTTP_OK);
         }
     }
 
@@ -130,7 +130,7 @@ class ResourceTest extends TestCase
                         'updated_at'
                     ]
                 ])
-                ->assertStatus(201);
+                ->assertStatus(Response::HTTP_CREATED);
         }
 
         $this->assertEquals($resourceCount + count($testCases), Resource::count());
@@ -153,13 +153,13 @@ class ResourceTest extends TestCase
                     'resource_type' => ["The resource type field is required."]
                 ]
             ])
-            ->assertStatus(422);
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         $data['resource_type'] = 'link';
 
         $response = $this->json('post',route('resources.store'),$data,$this->adminAuthHeader);
 
-        $response->assertStatus(201);
+        $response->assertStatus(Response::HTTP_CREATED);
     }
 
     public function test_resource_creation_returns_error_with_invalid_data()
@@ -181,7 +181,7 @@ class ResourceTest extends TestCase
                     'title' => ["The title field is required."],
                 ]
             ])
-            ->assertStatus(422);
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 
         // a link that is not valid should not be created
         $data['link'] = 'invalid-link';
@@ -195,7 +195,7 @@ class ResourceTest extends TestCase
                     'link' => ['The link must be a valid URL.']
                 ]
             ])
-            ->assertStatus(422);
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     public function test_links_resource_creation_fails_with_invalid_data()
@@ -221,7 +221,7 @@ class ResourceTest extends TestCase
 
             $response
                 ->assertJson(['errors' => $testCase['errors']])
-                ->assertStatus(422);
+                ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $this->assertEquals($resourceCount,Resource::count());
@@ -248,7 +248,7 @@ class ResourceTest extends TestCase
 
             $response
                 ->assertJson(['errors' => $testCaseData['errors']])
-                ->assertStatus(422);
+                ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $this->assertEquals($resourceCount,Resource::count());
@@ -375,7 +375,7 @@ class ResourceTest extends TestCase
                     'success' => true,
                     'message' => 'resource deleted successfully.'
                 ])
-                ->assertStatus(200);
+                ->assertStatus(Response::HTTP_OK);
 
             $this->assertEquals($resourceCount - 1,Resource::count());
 
@@ -408,24 +408,24 @@ class ResourceTest extends TestCase
 
     public function test_a_resource_can_be_viewed()
     {
-
+        $this->markTestSkipped();
     }
 
     public function test_a_resource_can_be_viewed_by_anyone()
     {
         $resource = Resource::first();
 
-        $response = $this->json('get',route('resources.show',$resource->id),[],[]);
+        foreach([$this->adminAuthHeader,[]] as $header) {
 
-        $response->dump();
+            $response = $this->json('get',route('resources.show',$resource->id),[],$header);
 
-        $response
-            ->assertJsonStructure([
-                'title',
-                'id',
-                'type'
-            ])
-            ->assertStatus(200);
+            $response
+                ->assertJsonStructure([
+                    'title',
+                    'id',
+                    'type'
+                ])
+                ->assertStatus(Response::HTTP_OK);
+        }
     }
-
 }

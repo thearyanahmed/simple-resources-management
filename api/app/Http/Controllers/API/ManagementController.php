@@ -5,12 +5,12 @@ namespace App\Http\Controllers\API;
 use App\Factories\CreateResourceFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateResourceRequest;
+use App\Http\Resources\DeleteResourceResponse;
 use App\Http\Resources\SingleResourceCreatedResponse;
 use App\Models\Resource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
-use Exception;
 use Throwable;
 
 class ManagementController extends Controller
@@ -40,10 +40,9 @@ class ManagementController extends Controller
 
             DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'resource deleted successfully.'
-            ],200);
+            $res = new DeleteResourceResponse(null);
+
+            return response()->json($res,Response::HTTP_OK);
 
         } catch (\Throwable $e) {
             DB::rollBack();
