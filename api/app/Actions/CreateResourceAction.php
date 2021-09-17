@@ -2,18 +2,16 @@
 
 namespace App\Actions;
 
-use App\Traits\Form\RequiredResourceFieldsInFormRequest;
 use Throwable;
 use Exception;
 use Illuminate\Support\Arr;
+use App\Mutators\ResourceMutator;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\{DB,Storage};
+use Illuminate\Support\Facades\DB;
 use App\Models\{File,HtmlSnippet,Link,Resource};
 
-class CreateResourceAction
+class CreateResourceAction extends ResourceMutator
 {
-    use RequiredResourceFieldsInFormRequest;
-
     protected string $relatedResourceType;
 
     protected Resource $resource;
@@ -30,22 +28,13 @@ class CreateResourceAction
         $this->relatedResourceType = $data['resource_type'];
 
         $this->relatedResourceData  = Arr::only($data,$this->requiredRelatedResources($this->relatedResourceType));
-        $this->relatedResourceModel = new (self::getResourceableType($this->relatedResourceType));
+        $this->relatedResourceModel = new ($this->getResourceableType($this->relatedResourceType));
 
         $this->resourceData = [
             'title'             => $data['title'],
             'resourceable_type' => $this->relatedResourceModel::class,
             'resourceable_id'   => null,
         ];
-    }
-
-    private static function getResourceableType(string $relatedResourceType) : string
-    {
-        return ([
-            Resource::RESOURCE_LINK         => Link::class,
-            Resource::RESOURCE_FILE         => File::class,
-            Resource::RESOURCE_HTML_SNIPPET => HtmlSnippet::class,
-        ])[$relatedResourceType];
     }
 
     /**
@@ -117,9 +106,9 @@ class CreateResourceAction
 
         $dir = config('filesystems.file_dir');
 
-        $uploadedFilePath = $this->uploadFile($disk,$dir);
+        $uploadedFilePath = $this->uploadFile($disk,$dir, $this->relatedResourceData['file']);
 
-        $url = Storage::url($uploadedFilePath);
+        $url = $this->fileUrl($uploadedFilePath);
 
         return File::create([
             'disk'    => $disk,
@@ -127,11 +116,5 @@ class CreateResourceAction
             'abs_url' => $url
         ]);
     }
-
-    private function uploadFile(string $disk, string $dir)
-    {
-        return Storage::disk($disk)->put($dir ,$this->relatedResourceData['file']);
-    }
-
 
 }

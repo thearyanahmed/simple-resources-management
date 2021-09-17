@@ -2,18 +2,16 @@
 
 namespace App\Actions;
 
-use App\Traits\Form\RequiredResourceFieldsInFormRequest;
 use Throwable;
 use Exception;
 use Illuminate\Support\Arr;
-use Illuminate\Database\Eloquent\Model;
+use App\Mutators\ResourceMutator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\{File,HtmlSnippet,Link,Resource};
 
-class EditResourceAction
+class EditResourceAction extends ResourceMutator
 {
-    use RequiredResourceFieldsInFormRequest;
-
     protected string $relatedResourceType;
 
     protected Resource $resource;
