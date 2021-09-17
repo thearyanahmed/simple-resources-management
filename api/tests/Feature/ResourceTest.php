@@ -333,7 +333,7 @@ class ResourceTest extends TestCase
                 ])
                 ->assertStatus(201);
 
-            $this->assertFileExists($response->decodeResponseJson()['resource']['file']['path']);
+            $this->assertTrue(Storage::exists($response->decodeResponseJson()['resource']['file']['path']));
         }
 
         $this->assertEquals($resourceCount + $rounds, Resource::count());
@@ -343,6 +343,9 @@ class ResourceTest extends TestCase
     public function test_a_resource_can_be_deleted()
     {
         // write seeders for resources to create a bunch of resources
+
+        
+
         // match resource count
         // match related resource count
         // hit delete endpoint

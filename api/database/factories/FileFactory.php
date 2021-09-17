@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use App\Models\File;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class FileFactory extends Factory
 {
@@ -21,8 +23,20 @@ class FileFactory extends Factory
      */
     public function definition()
     {
+        $dir = config('filesystems.file_dir');
+
+        $file = UploadedFile::fake()->create(uniqid() . '.pdf' );
+
+        $disk = config('filesystems.default');
+
+        $uploadedFilePath = Storage::disk($disk)->put($dir, $file);
+
+        $url = Storage::url($uploadedFilePath);
+
         return [
-            'file' => $this->faker->file
+            'disk'    => $disk,
+            'path'    => $uploadedFilePath,
+            'abs_url' => $url
         ];
     }
 }

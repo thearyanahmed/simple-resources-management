@@ -28,6 +28,8 @@ return [
     |
     */
 
+    'file_dir' => 'resources/pdfs',
+
     'disks' => [
 
         'local' => [

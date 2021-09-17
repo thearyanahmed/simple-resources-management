@@ -136,7 +136,7 @@ class CreateResourceFactory
     {
         $disk = config('filesystems.default');
 
-        $dir = 'resources/pdfs';
+        $dir = config('filesystems.file_dir');
 
         $uploadedFilePath = Storage::disk($disk)->put($dir ,$this->relatedResourceData['file']);
 
