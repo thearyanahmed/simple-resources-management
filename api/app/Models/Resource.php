@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 /**
  * @property integer $id
  * @property string $resourceable_type
+ * @property string $type
  * @method static create(array $resourceData)
  */
 class Resource extends Model
@@ -28,7 +29,7 @@ class Resource extends Model
     ];
 
     protected $appends = [
-        'resource_type'
+        'type'
     ];
 
     protected $hidden = [
@@ -40,7 +41,7 @@ class Resource extends Model
         return $this->morphTo();
     }
 
-    public function getResourceTypeAttribute(): string
+    public function getTypeAttribute(): string
     {
         return ([
             Link::class        => Resource::RESOURCE_LINK,

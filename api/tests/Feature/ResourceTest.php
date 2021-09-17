@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Nette\Utils\Html;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class ResourceTest extends TestCase
@@ -81,7 +81,7 @@ class ResourceTest extends TestCase
 
             $resourceShouldBe = [
                 'title' => $testCaseData['title'],
-                'resource_type' => 'link',
+                'type' => 'link',
                 'link' => [
                     'link' => $testCaseData['link'], // quite messy
                     'opens_in_new_tab' => $testCaseData['opens_in_new_tab']
@@ -99,7 +99,7 @@ class ResourceTest extends TestCase
                     'message',
                     'resource' => [
                         'title',
-                        'resource_type',
+                        'type',
                         'link' => [
                             'link',
                             'opens_in_new_tab'
@@ -253,7 +253,7 @@ class ResourceTest extends TestCase
 
             $resourceShouldBe = [
                 'title' => $testData['title'],
-                'resource_type' => 'html_snippet',
+                'type' => 'html_snippet',
                 'html_snippet' => [
                     'description' => $testData['description'],
                     'markup'      => $testData['markup']
@@ -271,7 +271,7 @@ class ResourceTest extends TestCase
                     'message',
                     'resource' => [
                         'title',
-                        'resource_type',
+                        'type',
                         'html_snippet' => [
                             'description',
                             'markup'
@@ -306,7 +306,7 @@ class ResourceTest extends TestCase
 
             $resourceShouldBe = [
                 'title' => $testData['title'],
-                'resource_type' => 'file',
+                'type' => 'file',
                 'file' => [] // file abs_path being checked with assertFileExists
             ];
 
@@ -321,7 +321,7 @@ class ResourceTest extends TestCase
                     'message',
                     'resource' => [
                         'title',
-                        'resource_type',
+                        'type',
                         'file' => [
                             'abs_url',
                             'path'
@@ -343,6 +343,8 @@ class ResourceTest extends TestCase
     public function test_a_resource_can_be_deleted()
     {
         // write seeders for resources to create a bunch of resources
+        // todo Enable File::class
+
         collect([
                 Link::class, HtmlSnippet::class, // File::class,
             ])
@@ -355,16 +357,46 @@ class ResourceTest extends TestCase
                 });
             });
 
-        $resources = Resource::with('resourceable')->inRandomOrder()->take(10)->select('id')->get();
+        $resourceCount = Resource::count();
 
-        $resources->each(function ($resource){
-            // hit delete request
-            dd($resource->link,$resource->html_snippet);
+        $resources = Resource::with('resourceable')->inRandomOrder()->take(10)->get();
+
+        $resources->each(function ($resource) use (&$resourceCount) {
+            $response = $this->json('delete',route('resources.delete',$resource->id),[],$this->adminAuthHeader);
+
+            $response
+                ->assertJson([
+                    'success' => true,
+                    'message' => 'resource deleted successfully.'
+                ])
+                ->assertStatus(200);
+
+            $this->assertEquals($resourceCount - 1,Resource::count());
+
+            $this->assertModelMissing($resource);
+            $this->assertModelMissing($resource->resourceable);
+
+            $resourceCount = $resourceCount - 1;
+
+            if($resource->type === Resource::RESOURCE_FILE) {
+                $this->assertFalse(Storage::exists($resource->path));
+            }
         });
+    }
 
-        // match resource count
-        // match related resource count
-        // hit delete endpoint
-        // match response
+    public function test_delete_route_is_only_accessible_by_admin()
+    {
+        $resource = Resource::factory()->count(1)->create([
+            'resourceable_type' => Link::class, // pseudo
+            'resourceable_id'   => mt_rand(1000,100000)
+        ]);
+
+        $response = $this->json('delete',route('resources.delete',$resource[0]->id),[],[]);
+
+        $response
+            ->assertJson([
+                'error' => 'unauthorized.'
+            ])
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 }

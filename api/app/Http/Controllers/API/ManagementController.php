@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateResourceRequest;
 use App\Models\Resource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
+use Exception;
 use Throwable;
 
 class ManagementController extends Controller
@@ -26,5 +28,28 @@ class ManagementController extends Controller
             'message'  => 'resource created successfully.',
             'resource' => $resource,
         ], Response::HTTP_CREATED);
+    }
+
+    public function destroy(Resource $resource)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $resource->resourceable()->delete();
+            $resource->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'resource deleted successfully.'
+            ],200);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            throw $e;
+        }
     }
 }
