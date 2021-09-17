@@ -16,7 +16,7 @@ Route::middleware('admin')->group(function(){
     });
 
     Route::post('resources',[ManagementController::class,'store'])->name('resources.store');
-    Route::delete('resources/{resource}',[ManagementController::class,'destroy'])->name('resources.delete');
+    Route::delete('resources/{id}',[ManagementController::class,'destroy'])->name('resources.delete');
 });
 
 
