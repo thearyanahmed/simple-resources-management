@@ -19,6 +19,27 @@ class ResourceTest extends TestCase
 
     public array $adminAuthHeader = ['user_email' => 'admin@admin.com'];
 
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Storage::fake('local');
+
+        collect([
+//                Link::class, HtmlSnippet::class,
+  File::class,
+            ])
+            ->each(function ($model){
+                $model::factory()->count(100)->create()->each(function ($link) use ($model) {
+                    Resource::factory()->count(1)->create([
+                        'resourceable_type' => $model,
+                        'resourceable_id'   => $link->id
+                    ]);
+                });
+            });
+    }
+
     public function test_admin_routes_can_not_be_accessed_unless_user_is_admin()
     {
         // todo: maybe use named routes?
@@ -342,21 +363,6 @@ class ResourceTest extends TestCase
 
     public function test_a_resource_can_be_deleted()
     {
-        // write seeders for resources to create a bunch of resources
-        // todo Enable File::class
-
-        collect([
-                Link::class, HtmlSnippet::class, // File::class,
-            ])
-            ->each(function ($model){
-                $model::factory()->count(100)->create()->each(function ($link) use ($model) {
-                    Resource::factory()->count(1)->create([
-                        'resourceable_type' => $model,
-                        'resourceable_id'   => $link->id
-                    ]);
-                });
-            });
-
         $resourceCount = Resource::count();
 
         $resources = Resource::with('resourceable')->inRandomOrder()->take(10)->get();
@@ -399,4 +405,25 @@ class ResourceTest extends TestCase
             ])
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
+
+    public function test_a_resource_can_be_viewed()
+    {
+
+    }
+
+    public function test_a_resource_can_be_viewed_by_anyone()
+    {
+        $resource = Resource::first();
+
+        $response = $this->json('get',route('resources.view',$resource->id),[],[]);
+
+        $response
+            ->assertJsonStructure([
+                'title',
+                'id',
+                'type'
+            ])
+            ->assertStatus(200);
+    }
+
 }

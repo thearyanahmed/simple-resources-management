@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/heartbeat', HeartBeat::class);
 
-// public
+//Route::get('/resources/{id}',[Man]);
+
 Route::middleware('admin')->group(function(){
     // todo handle, change test endpoints
     Route::get('/resources',function (){
@@ -15,7 +16,7 @@ Route::middleware('admin')->group(function(){
 
     Route::post('resources',[ManagementController::class,'store'])->name('resources.store');
     Route::delete('resources/{resource}',[ManagementController::class,'destroy'])->name('resources.delete');
-
-
 });
-// admin
+
+
+
