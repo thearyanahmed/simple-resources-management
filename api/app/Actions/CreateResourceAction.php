@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Traits\Form\RequiredResourceFieldsInFormRequest;
 use Throwable;
 use Exception;
 use Illuminate\Support\Arr;
@@ -11,6 +12,8 @@ use App\Models\{File,HtmlSnippet,Link,Resource};
 
 class CreateResourceAction
 {
+    use RequiredResourceFieldsInFormRequest;
+
     protected string $relatedResourceType;
 
     protected Resource $resource;
@@ -26,7 +29,7 @@ class CreateResourceAction
     {
         $this->relatedResourceType = $data['resource_type'];
 
-        $this->relatedResourceData  = Arr::only($data,$this->requiredRelatedResources());
+        $this->relatedResourceData  = Arr::only($data,$this->requiredRelatedResources($this->relatedResourceType));
         $this->relatedResourceModel = new (self::getResourceableType($this->relatedResourceType));
 
         $this->resourceData = [
@@ -71,27 +74,6 @@ class CreateResourceAction
             DB::rollback();
             throw $e;
         }
-    }
-
-    /**
-     * @return string[]
-     * @throws Exception
-     */
-    private function requiredRelatedResources() : array
-    {
-        if($this->relatedResourceType === Resource::RESOURCE_LINK) {
-            return ['link','opens_in_new_tab'];
-        }
-
-        if($this->relatedResourceType === Resource::RESOURCE_HTML_SNIPPET) {
-            return ['markup','description'];
-        }
-
-        if($this->relatedResourceType === Resource::RESOURCE_FILE) {
-            return ['file'];
-        }
-
-        throw new Exception('unsupported resource type');
     }
 
     /**

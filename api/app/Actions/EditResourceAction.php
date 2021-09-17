@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Traits\Form\RequiredResourceFieldsInFormRequest;
 use Throwable;
 use Exception;
 use Illuminate\Support\Arr;
@@ -11,6 +12,8 @@ use App\Models\{File,HtmlSnippet,Link,Resource};
 
 class EditResourceAction
 {
+    use RequiredResourceFieldsInFormRequest;
+
     protected string $relatedResourceType;
 
     protected Resource $resource;
@@ -25,34 +28,13 @@ class EditResourceAction
      */
     public function __construct(Resource $resource, Model $relatedResource, array $formData)
     {
-        $this->resource = $resource;
+        $this->resource        = $resource;
         $this->relatedResource = $relatedResource;
 
         $this->relatedResourceType = $formData['resource_type'];
-        $this->relatedResourceData  = Arr::only($formData,$this->requiredRelatedResources());
+        $this->relatedResourceData = Arr::only($formData,$this->requiredRelatedResources($this->relatedResourceType));
 
         $this->resourceData = ['title' => $formData['title']];
-    }
-
-    /**
-     * @return string[]
-     * @throws Exception
-     */
-    private function requiredRelatedResources() : array
-    {
-        if($this->relatedResourceType === Resource::RESOURCE_LINK) {
-            return ['link','opens_in_new_tab'];
-        }
-
-        if($this->relatedResourceType === Resource::RESOURCE_HTML_SNIPPET) {
-            return ['markup','description'];
-        }
-
-        if($this->relatedResourceType === Resource::RESOURCE_FILE) {
-            return ['file'];
-        }
-
-        throw new Exception('unsupported resource type');
     }
 
     public function edit(Resource $resource) : Resource
