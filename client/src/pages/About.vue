@@ -6,7 +6,11 @@
     </div>
     <div v-else>
       <div v-if="state.resources.length > 0">
-
+        <ul>
+          <li v-for="(resource,i) in state.resources" :key="i">
+              {{ resource.title }}
+          </li>
+        </ul>
       </div>
       <div v-else>
         Sorry, no resources to show!
@@ -18,15 +22,15 @@
 <script>
 import { getAllResources } from "@/compositions/Resource";
 // reactive
-import { onMounted } from 'vue'
+import { onMounted, reactive } from 'vue'
 
 export default {
   setup() {
 
-    const state = {
+    const state = reactive({
       resources: [],
       loading: false
-    }
+    })
 
     onMounted(() => {
       state.loading = true
@@ -34,6 +38,9 @@ export default {
       getAllResources({ per_page: 10 })
           .success((res) => {
             state.resources = res.data
+          })
+          .error((err) => {
+            console.log('errors',err)
           })
           .endsWith(() => {
             state.loading = false
