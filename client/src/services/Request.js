@@ -92,13 +92,13 @@ export default class Request {
                     errors: []
                 }
 
-                //for(const prop in (err.response.data.errors || [])) {
-                    // if(err.response.data.errors.hasOwnProperty(prop)) {
-                    //     this.errorBag.errors.push(...err.response.data.errors[prop])
-                    // }
-                //}
+                for(const prop in (err.response.data.errors || [])) {
+                    if(err.response.data.errors[prop] !== null) {
+                        this.errorBag.errors.push(...err.response.data.errors[prop])
+                    }
+                }
 
-                this.onError(err.response.data,this.errorBag)
+                this.onError(this.errorBag,err.response.data)
             })
             .finally(() => {
                 if(!this.onCompletion) {

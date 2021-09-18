@@ -13,7 +13,14 @@
         </ul>
       </div>
       <div v-else>
-        Sorry, no resources to show!
+        <div v-if="state.api_errors.length > 0">
+          <li v-for="(msg,i) in state.api_errors" :key="i">
+            {{ msg }}
+          </li>
+        </div>
+        <div v-else>
+          Sorry, no resources to show!
+        </div>
       </div>
     </div>
   </div>
@@ -29,23 +36,27 @@ export default {
 
     const state = reactive({
       resources: [],
-      loading: false
+      loading: false,
+      api_errors: [],
     })
 
     onMounted(() => {
       state.loading = true
 
-      getAllResources({ per_page: 10 })
-          .success((res) => {
-            state.resources = res.data
-          })
-          .error((err) => {
-            console.log('errors',err)
-          })
-          .endsWith(() => {
-            state.loading = false
-          })
-          .send()
+        state.api_errors = []
+        getAllResources({ per_page: 10 })
+            .success((res) => {
+              state.resources = res.data
+            })
+            .error((errBag) => {
+              state.api_errors = errBag['errors'] || []
+              console.log('error',errBag)
+            })
+            .endsWith(() => {
+              state.loading = false
+            })
+            .send()
+
     })
 
     return {
