@@ -2,9 +2,6 @@
 
 namespace App\Mutators;
 
-use App\Models\File;
-use App\Models\HtmlSnippet;
-use App\Models\Link;
 use App\Models\Resource;
 use Exception;
 use Illuminate\Support\Facades\Storage;
@@ -36,14 +33,5 @@ class ResourceMutator
     protected function fileUrl(string $uploadedFilePath)
     {
         return Storage::url($uploadedFilePath);
-    }
-
-    protected function getResourceableType(string $relatedResourceType) : string
-    {
-        return ([
-            Resource::RESOURCE_LINK         => Link::class,
-            Resource::RESOURCE_FILE         => File::class,
-            Resource::RESOURCE_HTML_SNIPPET => HtmlSnippet::class,
-        ])[$relatedResourceType];
     }
 }

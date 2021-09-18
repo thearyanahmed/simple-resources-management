@@ -94,4 +94,30 @@ class Resource extends Model
 
         return $this->resourceable();
     }
+
+    public function scopeFilter($query, array $filters)
+    {
+        $query
+            ->when($filters['title'] ?? null, function ($query, $title) {
+                $query->where('title', 'like', '%' . $title . '%');
+            })
+            ->when($filters['resource_type'] ?? null,function ($query, $resourceType) {
+                $typeClass = self::getResourceableType($resourceType);
+
+                if($typeClass === null) {
+                    return $query;
+                }
+
+                return $query->where('resourceable_type',$typeClass);
+            });
+    }
+
+    public static function getResourceableType(string $relatedResourceType) : string|null
+    {
+        return ([
+            Resource::RESOURCE_LINK         => Link::class,
+            Resource::RESOURCE_FILE         => File::class,
+            Resource::RESOURCE_HTML_SNIPPET => HtmlSnippet::class,
+        ])[$relatedResourceType] ?? null;
+    }
 }

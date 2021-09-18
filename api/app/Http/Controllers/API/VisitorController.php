@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceIsNotDownloadable;
 use App\Http\Resources\SingleResourceResponse;
 use App\Models\Resource;
@@ -14,6 +15,18 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class VisitorController extends Controller
 {
     use ValidatesIdFromRouteParameter;
+
+    public function index()
+    {
+        $resources = Resource::query()
+                        ->filter(
+                            request()->only('title','resource_type')
+                        )
+                        ->orderBy($this->orderBy(),$this->orderDirection())
+                        ->paginate($this->perPage());
+
+        return new ResourceCollection($resources);
+    }
 
     public function show($id)
     {
