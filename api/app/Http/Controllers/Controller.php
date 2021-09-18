@@ -24,4 +24,14 @@ class Controller extends BaseController
 
         return $perPage;
     }
+
+    protected function orderBy(string $column = 'created_at')
+    {
+        return request('order_by',$column);
+    }
+
+    protected function orderDirection(string $dir = 'desc')
+    {
+        return request('order_direction',$dir);
+    }
 }

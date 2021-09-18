@@ -98,11 +98,11 @@ class Resource extends Model
     public function scopeFilter($query, array $filters)
     {
         $query
-            ->when($filters['search'] ?? null, function ($query, $search) {
-                $query->where('title', 'like', '%' . $search . '%');
+            ->when($filters['title'] ?? null, function ($query, $title) {
+                $query->where('title', 'like', '%' . $title . '%');
             })
-            ->when($filters['type'] ?? null,function ($query, $search) {
-                $typeClass = self::getResourceableType($search);
+            ->when($filters['resource_type'] ?? null,function ($query, $resourceType) {
+                $typeClass = self::getResourceableType($resourceType);
 
                 if($typeClass === null) {
                     return $query;

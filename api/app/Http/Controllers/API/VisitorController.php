@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ResourceCollection;
 use App\Http\Resources\ResourceIsNotDownloadable;
 use App\Http\Resources\SingleResourceResponse;
 use App\Models\Resource;
@@ -17,9 +18,14 @@ class VisitorController extends Controller
 
     public function index()
     {
-        $resources = Resource::filter()->paginte($this->perPage());
+        $resources = Resource::query()
+                        ->filter(
+                            request()->only('title','resource_type')
+                        )
+                        ->orderBy($this->orderBy(),$this->orderDirection())
+                        ->paginate($this->perPage());
 
-        return \response()->json([],200);
+        return new ResourceCollection($resources);
     }
 
     public function show($id)
