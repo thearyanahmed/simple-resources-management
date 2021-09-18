@@ -1,32 +1,27 @@
+import api_routes from "@/api_routes";
+
+const url = process.env.VUE_APP_API_BASE_URL
+
 export default class Router {
 
-    static boot({ routes, baseUrl }) {
-        this.routes = routes
-        this.setUpRouter({ baseUrl })
-    }
-
-    static setUpRouter(baseUrl) {
-        this.apiURL = baseUrl
-    }
-
     static getRoute(name, ...params ) {
-        let route = Object.assign({}, this.findRoute(name));
+        let route = Object.assign({}, Router.findRoute(name));
 
         if(!route) {
             return null
         }
         let path = route.path
 
-        path = this.parseRouteStrings(path,[].concat.apply([], params[0]))
+        path = Router.parseRouteStrings(path,[].concat.apply([], params[0]))
 
         route.path = path
-        route.abs = this.apiURL + path
+        route.abs = url + path
 
         return route
     }
 
     static findRoute(name) {
-        return this.routes.find( route => route.name === name) || null
+        return api_routes.find( route => route.name === name) || null
     }
 
     static parseRouteStrings(routeString,params) {
@@ -36,7 +31,7 @@ export default class Router {
         return routeString
     }
 
-    static buildQuery(url, { page, perPage, query } ) {
+    static buildQuery(url, { page, perPage, query= {} } ) {
 
         if(url || perPage || query) {
             url += '?'
@@ -52,7 +47,7 @@ export default class Router {
 
         if(query) {
             for(const key in query) {
-                if(query.hasOwnProperty(key)) {
+                if(query[key] !== null) {
                     url += `&${key}=${query[key]}`
                 }
             }

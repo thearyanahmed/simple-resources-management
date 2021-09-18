@@ -3,9 +3,7 @@ import axios from "axios"
 import Router from "./Router"
 
 export default class Request {
-
-    constructor({ routes, baseUrl }) {
-        Router.boot({ routes, baseUrl })
+    constructor() {
         this.actingAsAdmin = false
     }
 
@@ -94,11 +92,11 @@ export default class Request {
                     errors: []
                 }
 
-                for(const prop in (err.response.data.errors || [])) {
-                    if(err.response.data.errors.hasOwnProperty(prop)) {
-                        this.errorBag.errors.push(...err.response.data.errors[prop])
-                    }
-                }
+                //for(const prop in (err.response.data.errors || [])) {
+                    // if(err.response.data.errors.hasOwnProperty(prop)) {
+                    //     this.errorBag.errors.push(...err.response.data.errors[prop])
+                    // }
+                //}
 
                 this.onError(err.response.data,this.errorBag)
             })
