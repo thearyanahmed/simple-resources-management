@@ -44,14 +44,13 @@ export default {
       state.loading = true
 
         state.api_errors = []
+
         getAllResources({ per_page: 10 })
             .success((res) => {
-              console.log('res',res.data,res)
               state.resources = res.data
             })
             .error((errBag) => {
-              state.api_errors = errBag['errors'] || []
-              console.log('error',errBag)
+              state.api_errors = errBag['errors']
             })
             .endsWith(() => {
               state.loading = false
