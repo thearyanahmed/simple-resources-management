@@ -46,6 +46,7 @@ export default {
         state.api_errors = []
         getAllResources({ per_page: 10 })
             .success((res) => {
+              console.log('res',res.data,res)
               state.resources = res.data
             })
             .error((errBag) => {
