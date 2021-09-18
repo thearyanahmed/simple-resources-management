@@ -17,6 +17,8 @@ class VisitorController extends Controller
 
     public function index()
     {
+        $resources = Resource::filter()->paginte($this->perPage());
+
         return \response()->json([],200);
     }
 

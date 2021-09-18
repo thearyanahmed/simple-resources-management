@@ -28,7 +28,7 @@ class CreateResourceAction extends ResourceMutator
         $this->relatedResourceType = $data['resource_type'];
 
         $this->relatedResourceData  = Arr::only($data,$this->requiredRelatedResources($this->relatedResourceType));
-        $this->relatedResourceModel = new ($this->getResourceableType($this->relatedResourceType));
+        $this->relatedResourceModel = new (Resource::getResourceableType($this->relatedResourceType));
 
         $this->resourceData = [
             'title'             => $data['title'],
