@@ -15,6 +15,11 @@ class VisitorController extends Controller
 {
     use ValidatesIdFromRouteParameter;
 
+    public function index()
+    {
+        return \response()->json([],200);
+    }
+
     public function show($id)
     {
         abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND);

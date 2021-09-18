@@ -39,7 +39,7 @@ class ResourceTest extends TestCase
     {
         // todo: maybe use named routes?
         $routeMap = [
-            'get' => '/api/resources'
+            'post' => route('resources.store')
         ];
 
         foreach($routeMap as $method => $endpoint) {
@@ -55,7 +55,7 @@ class ResourceTest extends TestCase
         // with authentication header
         foreach($routeMap as $method => $endpoint) {
             $response = $this->json($method,$endpoint,[],$this->adminAuthHeader);
-            $response->assertStatus(Response::HTTP_OK);
+            $this->assertNotEquals(Response::HTTP_UNAUTHORIZED,$response->status());
         }
     }
 
@@ -564,5 +564,11 @@ class ResourceTest extends TestCase
                 ]
             ])
             ->assertStatus(Response::HTTP_OK);
+    }
+
+    public function test_user_should_be_able_to_get_a_paginated_list_of_all_resources()
+    {
+        $this->json('get',route('resources.index'),[],[])
+            ->dump();
     }
 }
