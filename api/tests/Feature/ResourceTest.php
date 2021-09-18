@@ -47,6 +47,11 @@ class ResourceTest extends TestCase
             $response->assertStatus(Response::HTTP_UNAUTHORIZED);
         }
 
+        foreach($routeMap as $method => $endpoint) {
+            $response = $this->json($method,$endpoint,[],['user_email' => 'a_non_admin_email@hello.com']);
+            $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+        }
+
         // with authentication header
         foreach($routeMap as $method => $endpoint) {
             $response = $this->json($method,$endpoint,[],$this->adminAuthHeader);

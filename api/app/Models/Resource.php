@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -83,12 +84,12 @@ class Resource extends Model
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function file()
+    public function file(): MorphTo
     {
         if($this->type  !== Resource::RESOURCE_FILE) {
-            throw new \Exception('attempt to access file while resource is not a file type.');
+            throw new Exception('attempt to access file while resource is not a file type.');
         }
 
         return $this->resourceable();
