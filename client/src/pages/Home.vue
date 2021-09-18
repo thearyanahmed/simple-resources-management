@@ -1,5 +1,7 @@
 <template>
   <div>
-    home page
+    // display all resources
+    // show error message
+
   </div>
 </template>
