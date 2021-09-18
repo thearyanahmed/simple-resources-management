@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
@@ -17,6 +18,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return response()->json(['error' => 'unauthorized.'],Response::HTTP_UNAUTHORIZED);
+        return response()->json(['errors' => [ 'authentication' => ['unauthorized.']]],Response::HTTP_UNAUTHORIZED);
     }
 }

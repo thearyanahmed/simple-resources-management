@@ -6,10 +6,21 @@
     </div>
     <div v-else>
       <div v-if="state.resources.length > 0">
-
+        <ul>
+          <li v-for="(resource,i) in state.resources" :key="i">
+              {{ resource.title }}
+          </li>
+        </ul>
       </div>
       <div v-else>
-        Sorry, no resources to show!
+        <div v-if="state.api_errors.length > 0">
+          <li v-for="(msg,i) in state.api_errors" :key="i">
+            {{ msg }}
+          </li>
+        </div>
+        <div v-else>
+          Sorry, no resources to show!
+        </div>
       </div>
     </div>
   </div>
@@ -18,27 +29,35 @@
 <script>
 import { getAllResources } from "@/compositions/Resource";
 // reactive
-import { onMounted } from 'vue'
+import { onMounted, reactive } from 'vue'
 
 export default {
   setup() {
 
-    const state = {
+    const state = reactive({
       resources: [],
-      loading: false
-    }
+      loading: false,
+      api_errors: [],
+    })
 
     onMounted(() => {
       state.loading = true
 
-      getAllResources({ per_page: 10 })
-          .success((res) => {
-            state.resources = res.data
-          })
-          .endsWith(() => {
-            state.loading = false
-          })
-          .send()
+        state.api_errors = []
+        getAllResources({ per_page: 10 })
+            .success((res) => {
+              console.log('res',res.data,res)
+              state.resources = res.data
+            })
+            .error((errBag) => {
+              state.api_errors = errBag['errors'] || []
+              console.log('error',errBag)
+            })
+            .endsWith(() => {
+              state.loading = false
+            })
+            .send()
+
     })
 
     return {

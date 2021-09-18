@@ -360,7 +360,7 @@ class ResourceTest extends TestCase
 
         $response
             ->assertJson([
-                'error' => 'unauthorized.'
+                'errors' => ['authentication' => ['unauthorized.']]
             ])
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
