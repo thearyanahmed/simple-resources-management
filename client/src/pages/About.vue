@@ -12,7 +12,8 @@
       </div>
       <div>
 
-        Count {{ state.resources.length }}
+        Count {{ resourcesCount }}
+
         <div v-if="state.resources.length === 0">
           sorry do data found!
         </div>
@@ -36,11 +37,12 @@
 
 <script lang="ts">
 
-import { defineComponent, onMounted, reactive } from 'vue';
+import { defineComponent, onMounted, reactive, computed } from 'vue';
 
 import { Page, QueryParams } from "@/compositions/QueryParams";
-import Request, {ErrorBag} from "@/plugins/Request";
-import {PaginatedResponse, PaginationLinks, PaginationMeta, Resource} from "@/compositions/Resource";
+import Request, { ErrorBag } from "@/plugins/Request";
+import { PaginationLinks, PaginationMeta } from "@/compositions/Pagination";
+import { PaginatedResponse, Resource } from "@/compositions/Resource";
 
 export default defineComponent({
     setup() {
@@ -63,6 +65,10 @@ export default defineComponent({
         res : paginatedRes,
         resources,
         errorBag
+      })
+
+      const resourcesCount = computed(() => {
+        return state.resources.length
       })
 
       function fetchResources(page : Page) {
@@ -98,7 +104,7 @@ export default defineComponent({
       })
 
       console.log('state',state)
-      return { state , fetchResources }
+      return { state , fetchResources, resourcesCount }
     }
 })
 </script>

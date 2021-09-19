@@ -1,3 +1,5 @@
+import { PaginationLinks, PaginationMeta } from "@/compositions/Pagination";
+
 export type ResourceType = {
     Link : 'link'
     HtmlSnippet : 'html_snippet'
@@ -28,18 +30,6 @@ export type Resource = {
     link ?: Link
     html_snippet ?: HtmlSnippet
     file ?: File
-}
-
-export type PaginationLinks = {
-    first ?: string
-    last ?: string
-    prev ?: string
-    next ?: string
-}
-
-export type PaginationMeta = {
-    current_page ?: number
-    last_page ?: number
 }
 
 export type PaginatedResponse = {
