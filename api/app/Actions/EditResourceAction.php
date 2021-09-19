@@ -70,7 +70,9 @@ class EditResourceAction extends ResourceMutator
         if($this->resource->type === Resource::RESOURCE_LINK || $this->resource->type === Resource::RESOURCE_HTML_SNIPPET) {
             $this->relatedResource->update($this->relatedResourceData);
         } elseif ($this->resource->type === Resource::RESOURCE_FILE) {
-            $this->updateFile();
+            if(isset($this->relatedResource['file'])) {
+                $this->updateFile();
+            }
         }
 
         throw new Exception('unsupported resource');

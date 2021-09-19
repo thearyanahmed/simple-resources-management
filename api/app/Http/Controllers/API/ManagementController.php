@@ -60,4 +60,6 @@ class ManagementController extends Controller
 
         return response()->json($res, Response::HTTP_OK);
     }
+
+    // todo update()
 }

@@ -8,6 +8,19 @@ use Illuminate\Support\Facades\Validator;
 
 class CreateResourceRequest extends FormRequest
 {
+    protected $linkRules = [
+        'link'             => 'required|url|max:255',
+        'opens_in_new_tab' => 'required|boolean',
+    ];
+
+    protected $htmlRules =  [
+        'description' => 'required|string|max:255',
+        'markup'      => 'required|string|max:10000',
+    ];
+
+    protected $fileRules = [
+        'file' => 'required|file|mimes:pdf|max:5120'
+    ];
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -49,17 +62,9 @@ class CreateResourceRequest extends FormRequest
     private function getResourceCreationRules(string $rule): array
     {
         return ([
-            Resource::RESOURCE_LINK => [
-                'link'             => 'required|url|max:255',
-                'opens_in_new_tab' => 'required|boolean',
-            ],
-            Resource::RESOURCE_HTML_SNIPPET => [
-                'description' => 'required|string|max:255',
-                'markup'      => 'required|string|max:10000',
-            ],
-            Resource::RESOURCE_FILE => [
-                'file' => 'required|file|mimes:pdf|max:5120'
-            ],
+            Resource::RESOURCE_LINK => $this->linkRules,
+            Resource::RESOURCE_HTML_SNIPPET => $this->htmlRules,
+            Resource::RESOURCE_FILE => $this->fileRules,
         ])[$rule];
     }
 }
