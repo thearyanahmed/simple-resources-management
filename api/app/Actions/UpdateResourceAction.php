@@ -11,7 +11,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class EditResourceAction extends ResourceMutator
+class UpdateResourceAction extends ResourceMutator
 {
     use DeletesStorageFile;
 

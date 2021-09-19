@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Actions\CreateResourceAction;
 use App\Actions\DeleteResourceAction;
-use App\Actions\EditResourceAction;
+use App\Actions\UpdateResourceAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateResourceRequest;
 use App\Http\Requests\UpdateResourceRequest;
@@ -78,7 +78,7 @@ class ManagementController extends Controller
 
         abort_if(empty($resource), 404);
 
-        $updatedResource = (new EditResourceAction($resource,$resource->resourceable,$data))->edit();
+        $updatedResource = (new UpdateResourceAction($resource,$resource->resourceable,$data))->edit();
 
         $res = new SingleResourceUpdateResponse($updatedResource);
 
