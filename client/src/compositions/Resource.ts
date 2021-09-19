@@ -67,8 +67,8 @@ export type ResourceForm  = {
     title: string,
     resource_type: string,
     link ?: string
-    opens_in_new_tab ?: boolean
-    file ?: string
+    opens_in_new_tab ?: boolean|number
+    file ?: string | null
     markup ?: string
     description ?: string
     _method?: string

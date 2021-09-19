@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Models\Resource;
 use App\Mutators\ResourceMutator;
+use App\Traits\DeletesStorageFile;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -12,6 +13,8 @@ use Throwable;
 
 class EditResourceAction extends ResourceMutator
 {
+    use DeletesStorageFile;
+
     protected string $relatedResourceType;
 
     protected Resource $resource;
@@ -31,7 +34,7 @@ class EditResourceAction extends ResourceMutator
 
         $this->relatedResourceType = $formData['resource_type'];
         $this->relatedResourceData = Arr::only($formData,$this->requiredRelatedResources($this->relatedResourceType));
-
+        logger()->error('rel',$this->relatedResourceData);
         $this->resourceData = ['title' => $formData['title']];
     }
 
@@ -69,8 +72,10 @@ class EditResourceAction extends ResourceMutator
         if($this->resource->type === Resource::RESOURCE_LINK || $this->resource->type === Resource::RESOURCE_HTML_SNIPPET) {
             return $this->relatedResource->update($this->relatedResourceData);
         } elseif ($this->resource->type === Resource::RESOURCE_FILE) {
-            if(isset($this->relatedResource['file'])) {
+
+            if(! is_null(  $this->relatedResourceData['file'] ?? null)) {
                 $this->updateFile();
+                self::deleteFile($this->relatedResource,'after new file upload');
             }
             return true;
         }

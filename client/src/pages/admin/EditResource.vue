@@ -59,7 +59,7 @@
                 </label>
 
                 <div class="border border-dashed rounded-md border-gray-500 relative">
-                  <input id="file" accept="application/pdf" class="cursor-pointer relative block opacity-0 w-full h-full p-20 z-50" required type="file"
+                  <input id="file" accept="application/pdf" class="cursor-pointer relative block opacity-0 w-full h-full p-20 z-50" type="file"
                          @change="handleChoseFile($event)">
                   <div class="text-center p-10 absolute top-0 right-0 left-0 m-auto">
                     <h4 v-if="selectedFileName" class="text-xl">
@@ -98,12 +98,17 @@ import router from "@/router";
 
 import {computed, defineComponent, onMounted, reactive} from "vue";
 import Request, {ErrorBag} from "@/plugins/Request";
-import {displayDate} from "@/compositions/Utils";
+import {displayDate, objectToFormData} from "@/compositions/Utils";
 
-import {Resource, ResourceForm, resourceToFormFactory, ResourceType as resourceType} from "@/compositions/Resource";
+import {
+  Resource,
+  ResourceForm,
+  resourceToFormFactory,
+  ResourceType,
+  ResourceType as resourceType
+} from "@/compositions/Resource";
 import Loading from '@/components/Loading.vue'
 import Errors from '@/components/DisplayErrors.vue'
-import { objectToFormData } from '@/compositions/Utils'
 
 export default defineComponent({
   components: {
@@ -127,9 +132,7 @@ export default defineComponent({
     };
 
     let resource: Resource = {} as Resource
-    let form: ResourceForm = {
-      _method: 'PATCH',
-    } as ResourceForm
+    let form: ResourceForm = {} as ResourceForm
 
     let selectedFile: any = null
 
@@ -159,9 +162,7 @@ export default defineComponent({
 
       r.to('resources.edit', [id])
           .success((res) => {
-            const r: Resource = res as Resource
-            state.resource = r
-            state.form = resourceToFormFactory(r, r.type)
+            assignResourceAndForm(res)
           })
           .error((err) => {
             state.errorBag = err
@@ -169,6 +170,12 @@ export default defineComponent({
           .finally(() => state.loading = false)
           .asAdmin()
           .send()
+    }
+
+    function assignResourceAndForm(res: any) {
+      const r: Resource = res as Resource
+      state.resource = r
+      state.form = resourceToFormFactory(r, r.type)
     }
 
     function handleChoseFile(event: any) {
@@ -186,13 +193,22 @@ export default defineComponent({
         request.headers({
           'Content-Type' : 'multipart/form-data'
         })
+      } else {
+        delete state.form.file
+      }
+
+      if(state.resource.type === ResourceType.link) {
+        state.form.opens_in_new_tab = state.form.opens_in_new_tab ? 1 : 0
       }
 
       const formData = objectToFormData(state.form)
 
       request.with(formData)
-      request.success(res => console.log('res',res))
-      request.success(err => console.error('err',err))
+      request.success(res => {
+        assignResourceAndForm(res.resource)
+        state.selectedFile = null
+      })
+      request.error(err => state.errorBag = err)
 
       request.send()
 

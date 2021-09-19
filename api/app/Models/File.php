@@ -18,6 +18,15 @@ class File extends Model
         'id', 'created_at','updated_at','disk',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleted(function($file) {
+            self::deleteFile($file,'after delete');
+        });
+    }
+
     public function resource()
     {
         return $this->morphOne(Resource::class, 'resourceable');

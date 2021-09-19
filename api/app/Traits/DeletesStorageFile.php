@@ -8,19 +8,6 @@ use Exception;
 
 trait DeletesStorageFile
 {
-    public static function bootDeletesStorageFile()
-    {
-        static::updated(function ($file) {
-            if($file->isDirty('path')) {
-                $this->deleteFile($file,'after update');
-            }
-        });
-
-        static::deleted(function ($file) {
-            self::deleteFile($file,'after delete');
-        });
-    }
-
     private static function deleteFile(File $file,string $action)
     {
         try {
