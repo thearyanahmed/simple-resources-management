@@ -2,17 +2,20 @@ import api_routes from "@/api_routes";
 
 const url = process.env.VUE_APP_API_BASE_URL
 
+interface StringMap { [key: string]: string; }
+type Query = StringMap
+
 export default class Router {
 
-    static getRoute(name, ...params ) {
-        let route = Object.assign({}, Router.findRoute(name));
+    static getRoute(name : string, ...params : any[] ) : string | null {
+        const route = Object.assign({}, Router.findRoute(name));
 
         if(!route) {
             return null
         }
         let path = route.path
 
-        path = Router.parseRouteStrings(path,[].concat.apply([], params[0]))
+        path = Router.parseRouteStrings(path,[...params[0]])
 
         route.path = path
         route.abs = url + path
@@ -31,7 +34,7 @@ export default class Router {
         return routeString
     }
 
-    static buildQuery(url, { page, perPage, query= {} } ) {
+    static buildQuery(url : string, { page = null, perPage = null, query = null } : { page : number | null, perPage : number | null, query : Query | null } ) {
 
         if(url || perPage || query) {
             url += '?'
