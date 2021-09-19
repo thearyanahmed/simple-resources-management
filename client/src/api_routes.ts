@@ -1,7 +1,7 @@
 export default  [
     {
         name: 'resources.index',
-        method: 'get',
+        method: 'GET',
         path: '/resources'
     },
 ]

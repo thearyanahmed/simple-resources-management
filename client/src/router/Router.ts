@@ -3,32 +3,39 @@ import api_routes from "@/api_routes";
 const url = process.env.VUE_APP_API_BASE_URL
 
 interface StringMap { [key: string]: string; }
+
+export type Route = {
+    method: string,
+    path: string,
+    abs : string
+}
+
 type Query = StringMap
 
 export default class Router {
 
-    static getRoute(name : string, ...params : any[] ) : string | null {
-        const route = Object.assign({}, Router.findRoute(name));
+    static getRoute(name : string, ...params : any[] ) : Route | null {
+        let route = Router.findRoute(name);
 
         if(!route) {
             return null
         }
-        let path = route.path
 
-        path = Router.parseRouteStrings(path,[...params[0]])
+        let path = Router.parseRouteStrings(route.path,[...params[0]])
 
-        route.path = path
-        route.abs = url + path
-
-        return route
+        return {
+            path: path,
+            abs: url + path,
+            method: route.method,
+        }
     }
 
-    static findRoute(name) {
+    static findRoute(name : string) : { path: string; method: string; name: string } | null {
         return api_routes.find( route => route.name === name) || null
     }
 
-    static parseRouteStrings(routeString,params) {
-        params.forEach(param => {
+    static parseRouteStrings(routeString : string ,params : any[]) {
+        params.forEach((param : any) => {
             routeString = routeString.replace(/{.*?}/,param)
         })
         return routeString

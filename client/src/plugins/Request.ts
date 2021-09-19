@@ -1,28 +1,39 @@
-import axios from "axios"
+import axios, {AxiosRequestConfig, Method, AxiosResponse} from "axios"
 
-import Router from "./Router"
+import Router, {Route} from "../router/Router"
 
-type CallbackHandler = () => any
+type CallbackHandler = (data: any | null) => any
 type RequestData = object | FormData
 type Headers = object
+type ErrorBag = {
+    message: string | null,
+    errors: string[]
+}
 
 export default class Request {
     private actingAsAdmin: boolean;
     private onSuccess: CallbackHandler | null;
     private onError: CallbackHandler | null;
     private onCompletion: CallbackHandler | null;
-    private endpoint: string | null;
+    private endpoint: Route | null;
     private requestData: RequestData | null;
     private requestHeaders: Headers | null;
+    private request: Promise<any> | null;
+    private response: AxiosResponse<any> | null;
+    private data: any;
+    private errorBag: ErrorBag | null;
 
     constructor() {
         this.actingAsAdmin = false
         this.onSuccess = null
         this.onError = null
         this.onCompletion = null
-        this.endpoint = null
+        this.endpoint = {} as Route
         this.requestData = null
         this.requestHeaders = null
+        this.request = null
+        this.errorBag = null
+        this.response = null
     }
 
     success(callback: CallbackHandler) {
@@ -40,7 +51,7 @@ export default class Request {
         return this
     }
 
-    to(name: string,params: array) {
+    to(name: string,params: any[]) {
         this.endpoint = Router.getRoute(name,params || [])
         return this
     }
@@ -72,6 +83,10 @@ export default class Request {
      */
     send() {
 
+        if(this.endpoint === null) {
+            throw new ReferenceError('reference to invalid route.')
+        }
+
         const headers = {
             'Accept': 'application/json',
             ...this.requestHeaders
@@ -87,11 +102,11 @@ export default class Request {
 
         const data = this.requestData
 
-        const config = {
+        const config : AxiosRequestConfig = {
             headers: headers,
             url: this.endpoint.abs,
             params: data,
-            method: this.endpoint.method,
+            method: (this.endpoint.method as Method),
         }
 
         this.request = axios(config)
@@ -107,10 +122,8 @@ export default class Request {
                 if(! this.onError) {
                     return
                 }
-                this.errorBag = {
-                    message: err.response.data.message,
-                    errors: []
-                }
+
+                this.errorBag = {} as ErrorBag
 
                 for(const prop in (err.response.data.errors || [])) {
                     if(err.response.data.errors[prop] !== null) {
@@ -118,13 +131,13 @@ export default class Request {
                     }
                 }
 
-                this.onError(this.errorBag,err.response.data)
+                this.onError(this.errorBag)
             })
             .finally(() => {
                 if(!this.onCompletion) {
                     return
                 }
-                this.onCompletion()
+                this.onCompletion(null)
 
             })
 

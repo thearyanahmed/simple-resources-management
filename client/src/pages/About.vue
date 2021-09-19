@@ -26,42 +26,28 @@
   </div>
 </template>
 
-<script>
-import { getAllResources } from "@/compositions/Resource";
+<script lang="ts">
+
+import { defineComponent, onMounted } from 'vue';
+
+// import { getAllResources } from "@/compositions/Resource";
 // reactive
-import { onMounted, reactive } from 'vue'
+// import { onMounted, reactive } from 'vue'
 
-export default {
-  setup() {
+export default defineComponent({
+    setup() {
+      const state = {
+        resources: [],
+        loading: false,
+        api_errors: [],
+      }
 
-    const state = reactive({
-      resources: [],
-      loading: false,
-      api_errors: [],
-    })
-
-    onMounted(() => {
-      state.loading = true
-
+      onMounted(() => {
         state.api_errors = []
 
-        getAllResources({ per_page: 10 })
-            .success((res) => {
-              state.resources = res.data
-            })
-            .error((errBag) => {
-              state.api_errors = errBag['errors']
-            })
-            .endsWith(() => {
-              state.loading = false
-            })
-            .send()
+      })
 
-    })
-
-    return {
-      state
+      return { state  }
     }
-  },
-}
+})
 </script>
