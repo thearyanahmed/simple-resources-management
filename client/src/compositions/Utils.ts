@@ -10,8 +10,6 @@ export function objectToFormData(form : ResourceForm | Object) : FormData {
 
     for (const key in form) {
         // @ts-ignore
-        console.log('key',key,'v',form[key])
-        // @ts-ignore
         formData.append(key,form[key])
     }
 

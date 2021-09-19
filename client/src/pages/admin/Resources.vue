@@ -57,12 +57,12 @@
 <script lang="ts">
 import { useRoute } from 'vue-router'
 
-import {defineComponent, reactive, onMounted} from "vue";
-import {PaginatedResponse} from "@/compositions/Resource";
-import {PaginationLinks, PaginationMeta} from "@/compositions/Pagination";
-import Request, {ErrorBag} from "@/plugins/Request";
-import {Page, QueryParams} from "@/compositions/QueryParams";
-import { displayDate, objectToFormData } from "@/compositions/Utils";
+import {defineComponent, reactive, onMounted} from "vue"
+import {PaginatedResponse} from "@/compositions/Resource"
+import {PaginationLinks, PaginationMeta} from "@/compositions/Pagination"
+import Request, {ErrorBag} from "@/plugins/Request"
+import {Page, QueryParams} from "@/compositions/QueryParams"
+import { displayDate, objectToFormData } from "@/compositions/Utils"
 
 import Loading from '@/components/Loading.vue'
 import NoDataFound from '@/components/Loading.vue'
@@ -79,12 +79,12 @@ export default defineComponent({
       data: [],
       links: {} as PaginationLinks,
       meta: {} as PaginationMeta,
-    };
+    }
 
     let errorBag: ErrorBag = {
       message: null,
       errors: [],
-    };
+    }
 
     let r = useRoute()
 
@@ -94,7 +94,7 @@ export default defineComponent({
     let q: QueryParams = {
       per_page,
       page
-    };
+    }
 
     const deletedIds : number[] = []
 
@@ -106,7 +106,7 @@ export default defineComponent({
       per_page,
       q,
       deletedIds,
-    });
+    })
 
     const headers = ['title', 'type', '']
 
@@ -129,7 +129,7 @@ export default defineComponent({
           alert(res.message)
         })
         .error((err) => {
-          console.error('err',err)
+          alert(err.message)
         })
         .asAdmin()
         .send()
@@ -138,34 +138,33 @@ export default defineComponent({
     function fetchResources(page: Page) {
       state.q.page = page
 
-      state.loading = true;
+      state.loading = true
 
-      (new Request())
+      const r = new Request()
+          r
           .to("resources.index", [])
           .queryParams(state.q)
           .asAdmin()
           .success((res) => {
-            state.res = res as PaginatedResponse;
+            state.res = res as PaginatedResponse
           })
           .error((err) => {
-            state.errorBag = err as ErrorBag;
+            state.errorBag = err as ErrorBag
           })
           .finally(() => (state.loading = false))
-          .send();
+          .send()
     }
 
-    state.loading = true;
-
     onMounted(() => {
-      fetchResources(state.page);
-    });
+      fetchResources(state.page)
+    })
     return {
       //accessors
       state, headers,
 
       // funcs
       fetchResources, displayDate, handlePageChange, handleDeletion
-    };
+    }
   },
-});
+})
 </script>

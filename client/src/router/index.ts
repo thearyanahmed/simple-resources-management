@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from "vue-router"
 import About from "../pages/About.vue"
 import Home from '../pages/Home.vue'
 import AdminResources from '../pages/admin/Resources.vue'
+import CreateResource from '../pages/admin/CreateResource.vue'
 import EditResource from '../pages/admin/EditResource.vue'
 
 const routes = [
@@ -14,6 +15,11 @@ const routes = [
         path: "/about",
         name: "about",
         component: About,
+    },
+    {
+        path: "/admin/resources/create",
+        name: "admin.resources.create",
+        component: CreateResource,
     },
     {
         path: "/admin/resources",

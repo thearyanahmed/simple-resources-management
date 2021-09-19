@@ -5,6 +5,11 @@ export default  [
         path: '/resources'
     },
     {
+        name: 'resources.store',
+        method: 'POST',
+        path: '/resources'
+    },
+    {
         name: 'resources.edit',
         method: 'GET',
         path: '/resources/{id}/edit'
