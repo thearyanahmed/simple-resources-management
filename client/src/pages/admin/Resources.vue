@@ -80,8 +80,8 @@ export default defineComponent({
 
     let r = useRoute()
 
-    const page : Page = r.query['page'] ?? 1
-    const per_page : Number = r.query['per_page'] ?? 10
+    const page : Page = Number(r.query['page']) ?? 1
+    const per_page : number = Number(r.query['per_page']) ?? 10
 
     let q: QueryParams = {
       per_page,
@@ -99,7 +99,7 @@ export default defineComponent({
 
     const headers = ['title', 'type', '']
 
-    function handlePageChange(event) {
+    function handlePageChange(event : any) {
         fetchResources(event.page)
     }
 

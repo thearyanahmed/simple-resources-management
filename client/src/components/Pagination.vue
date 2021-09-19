@@ -17,17 +17,17 @@
 
 <script lang="ts">
 import { defineComponent } from "vue"
-import { PaginationMeta } from "@/compositions/Pagination";
 
 export default defineComponent({
   props: {
       paginator: {
-        type: PaginationMeta,
+        type: Object,
         required: true,
       }
   },
   setup(props) {
     function changePage(page: number) {
+      //@ts-ignore
       this.$emit('changePage',{ page })
     }
 
