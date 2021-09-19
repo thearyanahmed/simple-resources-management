@@ -11,7 +11,7 @@
           <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
             <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
               <Table :headers="headers">
-                <tr v-for="(resource,i) in state.res.data" :key="i">
+                <tr v-for="(resource,i) in state.res.data" :key="i" :class="state.deletedIds.indexOf(resource.id) > -1 ? 'bg-red-400': ''">
 
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="text-sm text-gray-400">
@@ -29,9 +29,17 @@
                     <ResourceTypeBadge :resource-type="resource.type" />
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <router-link :to="{ name: 'admin.resources.edit', params: { id: resource.id } }" class="text-indigo-600 hover:text-indigo-900">
-                      Edit
-                    </router-link>
+                    <div v-if="state.deletedIds.indexOf(resource.id) === -1" class="flex flex-col">
+                      <router-link :to="{ name: 'admin.resources.edit', params: { id: resource.id } }" class="text-indigo-600 hover:text-indigo-900">
+                        Edit
+                      </router-link>
+                      <a href="#" @click="handleDeletion(resource.id)"  class="text-red-600 hover:text-red-900">
+                        Delete
+                      </a>
+                    </div>
+                    <div v-else>
+                      unavailable
+                    </div>
                   </td>
                 </tr>
               </Table>
@@ -54,7 +62,7 @@ import {PaginatedResponse} from "@/compositions/Resource";
 import {PaginationLinks, PaginationMeta} from "@/compositions/Pagination";
 import Request, {ErrorBag} from "@/plugins/Request";
 import {Page, QueryParams} from "@/compositions/QueryParams";
-import { displayDate } from "@/compositions/Utils";
+import { displayDate, objectToFormData } from "@/compositions/Utils";
 
 import Loading from '@/components/Loading.vue'
 import NoDataFound from '@/components/Loading.vue'
@@ -88,19 +96,43 @@ export default defineComponent({
       page
     };
 
+    const deletedIds : number[] = []
+
     let state = reactive({
       loading: false,
       res: paginatedRes,
       errorBag,
       page,
       per_page,
-      q
+      q,
+      deletedIds,
     });
 
     const headers = ['title', 'type', '']
 
     function handlePageChange(event : any) {
         fetchResources(event.page)
+    }
+
+    function handleDeletion(id: number) {
+      if(! confirm('Are you sure?')) {
+        return
+      }
+
+      const formData = objectToFormData({ _method: 'DELETE' })
+
+      const r = new Request()
+        r.to('resources.delete',[id])
+        .with(formData)
+        .success((res) => {
+          state.deletedIds.push(id)
+          alert(res.message)
+        })
+        .error((err) => {
+          console.error('err',err)
+        })
+        .asAdmin()
+        .send()
     }
 
     function fetchResources(page: Page) {
@@ -132,7 +164,7 @@ export default defineComponent({
       state, headers,
 
       // funcs
-      fetchResources, displayDate, handlePageChange
+      fetchResources, displayDate, handlePageChange, handleDeletion
     };
   },
 });

@@ -5,7 +5,7 @@ export function displayDate(date : Date) : string {
     return moment(date).format('h:mm a DD MMM, YY')
 }
 
-export function objectToFormData(form : ResourceForm) : FormData {
+export function objectToFormData(form : ResourceForm | Object) : FormData {
     const formData = new FormData
 
     for (const key in form) {
