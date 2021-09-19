@@ -9,4 +9,9 @@ export default  [
         method: 'GET',
         path: '/resources/{id}/edit'
     },
+    {
+        name: 'resources.update',
+        method: 'PATCH',
+        path: '/resources/{id}'
+    },
 ]

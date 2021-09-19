@@ -4,8 +4,7 @@ import Router, {Route} from "../router/Router"
 import {QueryParams, StringMap} from "@/compositions/QueryParams";
 
 type CallbackHandler = (data: any | null) => any
-type RequestData = QueryParams | FormData
-type Headers = StringMap
+type RequestData = QueryParams | FormData | object
 
 export type ErrorBag = {
     message: string | null,
@@ -19,7 +18,7 @@ export default class Request {
     private onCompletion: CallbackHandler | null;
     private endpoint: Route | null;
     private requestData: RequestData | null;
-    private requestHeaders: Headers | null;
+    private requestHeaders: Object | null;
     private request: Promise<any> | null;
     private response: AxiosResponse | null;
     private data: any;
@@ -63,8 +62,8 @@ export default class Request {
         return this
     }
 
-    headers({ data = {}} : { data: Headers | null } ) {
-        this.requestHeaders = data
+    headers(header : object ) {
+        this.requestHeaders = header
         return this
     }
 

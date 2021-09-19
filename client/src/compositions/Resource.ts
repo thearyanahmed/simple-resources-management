@@ -68,6 +68,7 @@ export type ResourceForm = {
     file ?: string
     markup ?: string
     description ?: string
+    _method?: string
 }
 
 export function resourceToFormFactory(resource : Resource, type: ResourceType) : ResourceForm {
@@ -87,6 +88,5 @@ export function resourceToFormFactory(resource : Resource, type: ResourceType) :
         form.description = resource.html_snippet?.description
     }
 
-    console.log('form',form,'resource',resource)
     return form
 }

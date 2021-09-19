@@ -7,12 +7,15 @@
     <div v-else>
       <div class="flex flex-col">
         <div class="w-6/12 mx-auto">
-          <form @submit.prevent="updateResource" method="POST" class="bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          <Errors v-if="state.errorBag.errors.length > 0" :errors="state.errorBag.errors"/>
+          <form class="bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mb-4" method="POST"
+                @submit.prevent="updateResource">
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
                 Title
               </label>
-              <input v-model="state.form.title" id="title" type="text" max="255" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+              <input id="title" v-model="state.form.title" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" max="255" required
+                     type="text">
             </div>
 
             <div v-if="state.resource.type === resourceType.link">
@@ -20,7 +23,8 @@
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="link">
                   Link
                 </label>
-                <input v-model="state.form.link" id="link" type="text" max="255" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <input id="link" v-model="state.form.link" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" max="255" required
+                       type="text">
               </div>
               <div class="mb-4">
                 <label class="md:w-2/3 block text-gray-500 font-bold">
@@ -34,16 +38,18 @@
 
             <div v-if="state.resource.type === resourceType.html_snippet">
               <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="description">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
                   Description
                 </label>
-                <textarea v-model="state.form.description" id="description" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+                <textarea id="description" v-model="state.form.description" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          required></textarea>
               </div>
               <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="markup">
+                <label class="block text-gray-700 text-sm font-bold mb-2">
                   Html Markup
                 </label>
-                <textarea v-model="state.form.markup" id="markup" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+                <textarea id="markup" v-model="state.form.markup" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          required></textarea>
               </div>
             </div>
             <div v-if="state.resource.type === resourceType.file">
@@ -53,9 +59,10 @@
                 </label>
 
                 <div class="border border-dashed rounded-md border-gray-500 relative">
-                  <input type="file" @change="handleChoseFile($event)" accept="application/pdf" required id="file" class="cursor-pointer relative block opacity-0 w-full h-full p-20 z-50">
+                  <input id="file" accept="application/pdf" class="cursor-pointer relative block opacity-0 w-full h-full p-20 z-50" required type="file"
+                         @change="handleChoseFile($event)">
                   <div class="text-center p-10 absolute top-0 right-0 left-0 m-auto">
-                    <h4 class="text-xl"  v-if="selectedFileName">
+                    <h4 v-if="selectedFileName" class="text-xl">
                       You have selected <span class="font-bold">{{ selectedFileName }}</span>
                     </h4>
 
@@ -67,13 +74,14 @@
                   </div>
                 </div>
 
-                <a :href="state.form.file" target="_blank" class="text-blue-400 underline mt-4">View current file</a>
+                <a :href="state.form.file" class="text-blue-400 underline mt-4" target="_blank">View current file</a>
               </div>
 
             </div>
 
             <div class="flex items-center justify-between md:justify-end">
-              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      type="submit">
                 Update
               </button>
             </div>
@@ -85,21 +93,22 @@
 </template>
 
 <script lang="ts">
-import { useRoute } from 'vue-router'
+import {useRoute} from 'vue-router'
 import router from "@/router";
 
-import { defineComponent, reactive, onMounted, computed } from "vue";
+import {computed, defineComponent, onMounted, reactive} from "vue";
 import Request, {ErrorBag} from "@/plugins/Request";
-import { displayDate } from "@/compositions/Utils";
+import {displayDate} from "@/compositions/Utils";
 
-import {Resource, ResourceType as resourceType, resourceToFormFactory, ResourceForm} from "@/compositions/Resource";
+import {Resource, ResourceForm, resourceToFormFactory, ResourceType as resourceType} from "@/compositions/Resource";
 import Loading from '@/components/Loading.vue'
+import Errors from '@/components/DisplayErrors.vue'
 
 export default defineComponent({
   components: {
-    Loading,
+    Loading, Errors
   },
-  setup() {
+  setup: function () {
     // check if route param is number or not
     let r = useRoute()
 
@@ -116,10 +125,12 @@ export default defineComponent({
       errors: [],
     };
 
-    let resource : Resource = {} as Resource
-    let form : ResourceForm = {} as ResourceForm
+    let resource: Resource = {} as Resource
+    let form: ResourceForm = {
+      _method: 'PATCH',
+    } as ResourceForm
 
-    let selectedFile : any = null
+    let selectedFile: any = null
 
     let state = reactive({
       id,
@@ -132,41 +143,56 @@ export default defineComponent({
 
     const selectedFileName = computed(() => {
 
-      console.log('selected file',state.selectedFile)
-
-      if(state.selectedFile !== null) {
+      if (state.selectedFile !== null) {
         return state.selectedFile ? state.selectedFile.name : null
       }
 
       return null
     })
 
-    function fetchResource(id : number) {
-        state.loading = true
+    function fetchResource(id: number) {
+      state.loading = true
+      state.errorBag.errors = []
 
-        let r = new Request()
+      let r = new Request()
 
-          r.to('resources.edit',[id])
+      r.to('resources.edit', [id])
           .success((res) => {
-              const r : Resource = res as Resource
-              state.resource = r
-              state.form = resourceToFormFactory(r,r.type)
+            const r: Resource = res as Resource
+            state.resource = r
+            state.form = resourceToFormFactory(r, r.type)
           })
           .error((err) => {
-            console.log('err',err)
+            state.errorBag = err
           })
           .finally(() => state.loading = false)
           .asAdmin()
           .send()
     }
 
-    function handleChoseFile(event : any) {
-      console.log(event.target.files[0])
+    function handleChoseFile(event: any) {
       state.selectedFile = event.target.files[0]
     }
 
     function updateResource() {
-      console.log('updating resource')
+
+      let request = (new Request()).to('resources.update', [state.id]).asAdmin()
+
+      if (state.selectedFile) {
+        state.form.file = state.selectedFile
+
+        request.headers({
+          'Content-Type' : 'multipart/form-data'
+        })
+      }
+
+      request.with(state.form)
+      request.success(res => console.log('res',res))
+      request.success(err => console.error('err',err))
+
+      request.send()
+
+      console.log('state,form', state.form)
     }
 
     onMounted(() => {
