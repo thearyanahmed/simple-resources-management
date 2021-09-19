@@ -37,7 +37,13 @@ export type PaginationLinks = {
     next ?: string
 }
 
+export type PaginationMeta = {
+    current_page ?: number
+    last_page ?: number
+}
+
 export type PaginatedResponse = {
     data : Resource[]
     links: PaginationLinks
+    meta : PaginationMeta
 }

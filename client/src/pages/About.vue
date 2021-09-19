@@ -12,17 +12,21 @@
       </div>
       <div>
 
-        Count {{ state.res.data.length }}
-        <div v-if="state.res.data.length === 0">
+        Count {{ state.resources.length }}
+        <div v-if="state.resources.length === 0">
           sorry do data found!
         </div>
 
         <div v-else>
           <ul>
-            <li class="text-green-400" v-for="(res,i) in state.res.data" :key="i">
+            <li class="text-green-400" v-for="(res,i) in state.resources" :key="i">
               <strong>{{ res.id }}</strong> {{ res.title }}
             </li>
           </ul>
+
+          <button v-if="state.res.meta.last_page > state.res.meta.current_page" @click="fetchResources( state.res.meta.current_page + 1 )">
+            load more
+          </button>
         </div>
 
       </div>
@@ -36,14 +40,15 @@ import { defineComponent, onMounted, reactive } from 'vue';
 
 import { Page, QueryParams } from "@/compositions/QueryParams";
 import Request, {ErrorBag} from "@/plugins/Request";
-import {PaginatedResponse, PaginationLinks} from "@/compositions/Resource";
+import {PaginatedResponse, PaginationLinks, PaginationMeta, Resource} from "@/compositions/Resource";
 
 export default defineComponent({
     setup() {
 
       let paginatedRes :PaginatedResponse = {
         data: [],
-        links: [] as PaginationLinks
+        links: {} as PaginationLinks,
+        meta: {} as PaginationMeta,
       }
 
       let errorBag :ErrorBag = {
@@ -51,9 +56,12 @@ export default defineComponent({
         errors: []
       }
 
+      let resources : Resource[] = [] as Resource[]
+
       let state = reactive({
         loading: false,
         res : paginatedRes,
+        resources,
         errorBag
       })
 
@@ -61,23 +69,22 @@ export default defineComponent({
         state.loading = true
 
         const q :QueryParams = {
-          per_page : 3,
+          per_page : 10,
           page: page,
         };
 
         let req = new Request()
 
-        // state.loading = true
+        state.loading = true
 
         req.to('resources.index',[])
           .with(q)
           .success((res) => {
             state.res = res as PaginatedResponse
-            console.log('res',paginatedRes)
+            state.resources.push(...state.res.data)
           })
             .error(err => {
               state.errorBag = err as ErrorBag
-              // console.log(state.errorBag + err + ' after error')
             })
             .finally(() => state.loading = false )
           .send()
