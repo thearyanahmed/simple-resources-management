@@ -38,9 +38,6 @@ class CreateResourceRequest extends FormRequest
      */
     public function rules() : array
     {
-        logger()->error('req',[
-            $this->request->all()
-        ]);
         // first we make sure resource_type is given
         // not passing request->all() as we only need to check 'resource_type'
         $resourceTypeRule = ['resource_type' => 'required|string|in:' . Resource::RESOURCE_HTML_SNIPPET . ',' . Resource::RESOURCE_LINK . ',' . Resource::RESOURCE_FILE ];

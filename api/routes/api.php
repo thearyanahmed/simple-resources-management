@@ -13,8 +13,6 @@ Route::get('/resources/{id}',[VisitorController::class,'show'])->name('resources
 Route::post('/resources/{id}/download',[VisitorController::class,'download'])->name('resources.download');
 
 Route::middleware('admin')->group(function(){
-//    Route::get('/resources',[VisitorController::class,'index'])->name('resources.index');
-
     Route::post('resources',[ManagementController::class,'store'])->name('resources.store');
     Route::get('resources/{id}/edit',[ManagementController::class,'edit'])->name('resources.edit');
     Route::put('resources/{id}',[ManagementController::class,'update'])->name('resources.update');

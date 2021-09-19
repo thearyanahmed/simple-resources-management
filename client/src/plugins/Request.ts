@@ -106,9 +106,11 @@ export default class Request {
         const config : AxiosRequestConfig = {
             headers: headers,
             url: this.endpoint.abs,
-            params: data,
+            data: data,
             method: (this.endpoint.method as Method),
         }
+
+        console.log('axios config',config)
 
         this.request = axios(config)
             .then(res => {

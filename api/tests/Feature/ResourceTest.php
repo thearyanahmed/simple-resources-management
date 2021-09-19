@@ -312,8 +312,10 @@ class ResourceTest extends TestCase
                     ],
                 ])
                 ->assertStatus(201);
-
-            $this->assertTrue(Storage::exists($response->decodeResponseJson()['resource']['file']['path']));
+            $r = $response->decodeResponseJson()['resource']['file'];
+            dump($r);
+            Storage::assertExists($r['path']);
+//            $this->assertTrue(Storage::exists($response->decodeResponseJson()['resource']['file']['path']));
         }
 
         $this->assertEquals($resourceCount + $rounds, Resource::count());

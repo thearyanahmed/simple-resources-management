@@ -59,8 +59,11 @@ export const ResourceTypeColors : ResourceStrings = {
     'file' : 'bg-purple-300',
 }
 
+interface CreatesFormData {
+    toFormData() : FormData
+}
 
-export type ResourceForm = {
+export type ResourceForm  = {
     title: string,
     resource_type: string,
     link ?: string
@@ -87,6 +90,5 @@ export function resourceToFormFactory(resource : Resource, type: ResourceType) :
         form.markup = resource.html_snippet?.markup
         form.description = resource.html_snippet?.description
     }
-
     return form
 }

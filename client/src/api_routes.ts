@@ -11,7 +11,7 @@ export default  [
     },
     {
         name: 'resources.update',
-        method: 'PATCH',
+        method: 'POST',
         path: '/resources/{id}'
     },
 ]

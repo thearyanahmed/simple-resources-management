@@ -25,12 +25,12 @@ class ResourceMutator
         throw new Exception('unsupported resource type');
     }
 
-    protected function uploadFile(string $disk, string $dir, $contents)
+    protected function uploadFile(string $disk, string $dir, $contents): string
     {
         return Storage::disk($disk)->put($dir , $contents);
     }
 
-    protected function fileUrl(string $uploadedFilePath)
+    protected function fileUrl(string $uploadedFilePath): string
     {
         return Storage::url($uploadedFilePath);
     }

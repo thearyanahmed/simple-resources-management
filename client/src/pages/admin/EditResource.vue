@@ -103,6 +103,7 @@ import {displayDate} from "@/compositions/Utils";
 import {Resource, ResourceForm, resourceToFormFactory, ResourceType as resourceType} from "@/compositions/Resource";
 import Loading from '@/components/Loading.vue'
 import Errors from '@/components/DisplayErrors.vue'
+import { objectToFormData } from '@/compositions/Utils'
 
 export default defineComponent({
   components: {
@@ -175,6 +176,7 @@ export default defineComponent({
     }
 
     function updateResource() {
+      state.form._method = 'PUT'
 
       let request = (new Request()).to('resources.update', [state.id]).asAdmin()
 
@@ -186,7 +188,9 @@ export default defineComponent({
         })
       }
 
-      request.with(state.form)
+      const formData = objectToFormData(state.form)
+
+      request.with(formData)
       request.success(res => console.log('res',res))
       request.success(err => console.error('err',err))
 
