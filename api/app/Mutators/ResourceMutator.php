@@ -32,6 +32,6 @@ class ResourceMutator
 
     protected function fileUrl(string $uploadedFilePath): string
     {
-        return Storage::url($uploadedFilePath);
+        return url('/') . Storage::url($uploadedFilePath);
     }
 }

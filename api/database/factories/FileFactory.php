@@ -31,7 +31,7 @@ class FileFactory extends Factory
 
         $uploadedFilePath = Storage::disk($disk)->put($dir, $file);
 
-        $url = Storage::url($uploadedFilePath);
+        $url = url('/') . Storage::url($uploadedFilePath);
 
         return [
             'disk'    => $disk,
