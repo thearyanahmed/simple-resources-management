@@ -103,7 +103,6 @@ export default defineComponent({
         }, 2000)
       })
 
-      console.log('state',state)
       return { state , fetchResources, resourcesCount }
     }
 })
