@@ -1,9 +1,11 @@
 <template>
-  <div class="bg-red-200 p-4 w-full mx-auto">
-    Sorry, there was a/an error/s.
+  <div class=" p-4 w-full mx-auto rounded-md">
 
+    <p class="w-full text-md font-bold text-red-500">
+      {{ message }}
+    </p>
     <ul>
-      <li v-for="(err, i) in errors" :key="i">{{ err }}</li>
+      <li v-for="(err, i) in errors" :key="i" class="text-red-500">{{ err }}</li>
     </ul>
   </div>
 </template>
@@ -17,6 +19,11 @@ export default defineComponent({
     errors: {
       type: Array,
       required: true,
+    },
+    message: {
+      type: String,
+      required: false,
+      default: "",
     }
   }
 })

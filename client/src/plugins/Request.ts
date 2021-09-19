@@ -7,7 +7,7 @@ type CallbackHandler = (data: any | null) => any
 type RequestData = QueryParams | FormData | object
 
 export type ErrorBag = {
-    message: string | null,
+    message?: string | null,
     errors: string[]
 }
 
@@ -133,14 +133,18 @@ export default class Request {
                     return
                 }
 
-                this.errorBag = {} as ErrorBag
+                const errorBag : ErrorBag = {
+                    message: err.response.message ?? 'sorry something went wrong',
+                    errors: []
+                }
 
                 for(const prop in (err.response.data.errors || [])) {
                     if(err.response.data.errors[prop] !== null) {
-                        this.errorBag.errors.push(...err.response.data.errors[prop])
+                        errorBag.errors.push(...err.response.data.errors[prop])
                     }
                 }
 
+                this.errorBag = errorBag
                 this.onError(this.errorBag)
             })
             .finally(() => {

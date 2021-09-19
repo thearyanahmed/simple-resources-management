@@ -1,13 +1,12 @@
 <template>
   <div class="w-full">
-    Welcome to admin page.
+    <AdminAreaDialogue />
 
     <Loading v-if="state.loading"/>
 
     <div v-else>
       <div class="flex flex-col">
         <div class="w-6/12 mx-auto">
-          <Errors v-if="state.errorBag.errors.length > 0" :errors="state.errorBag.errors"/>
           <form class="bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mb-4" method="POST"
                 @submit.prevent="updateResource">
             <div class="mb-4">
@@ -76,10 +75,11 @@
 
                 <a :href="state.form.file" class="text-blue-400 underline mt-4" target="_blank">View current file</a>
               </div>
-
             </div>
 
-            <div class="flex items-center justify-between md:justify-end">
+            <div class="flex flex-col md:flex-row items-center justify-center md:justify-end">
+              <Errors v-if="state.errorBag.errors.length > 0" :errors="state.errorBag.errors" :message="state.errorBag.message" class="mb-4" />
+
               <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                       type="submit">
                 Update
@@ -109,10 +109,11 @@ import {
 } from "@/compositions/Resource";
 import Loading from '@/components/Loading.vue'
 import Errors from '@/components/DisplayErrors.vue'
+import AdminAreaDialogue from '@/components/AdminAreaDialogue.vue'
 
 export default defineComponent({
   components: {
-    Loading, Errors
+    Loading, Errors, AdminAreaDialogue
   },
   setup: function () {
     // check if route param is number or not

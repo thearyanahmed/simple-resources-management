@@ -1,11 +1,10 @@
 <template>
   <div class="w-full">
-    Welcome to admin page.
 
+    <AdminAreaDialogue />
     <div>
       <div class="flex flex-col">
         <div class="w-6/12 mx-auto">
-          <Errors v-if="state.errorBag.errors.length > 0" :errors="state.errorBag.errors"/>
 
           <form class="bg-gray-100 shadow-md rounded px-8 pt-6 pb-8 mb-4" method="POST"
                 @submit.prevent="createResource">
@@ -36,6 +35,8 @@
                 <input id="link" v-model="state.form.link" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" max="255" required
                        type="text">
               </div>
+
+
               <div class="mb-4">
                 <label class="md:w-2/3 block text-gray-500 font-bold">
                   <input v-model="state.form.opens_in_new_tab" class="mr-2 leading-tight" type="checkbox">
@@ -90,6 +91,8 @@
             </div>
 
             <div class="flex items-center justify-between md:justify-end">
+              <Errors v-if="state.errorBag.errors.length > 0" :errors="state.errorBag.errors" :message="state.errorBag.message" class="mb-4" />
+
               <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                       type="submit">
                 Create
@@ -115,10 +118,11 @@ import {
   ResourceType as resourceType
 } from "@/compositions/Resource";
 import Errors from '@/components/DisplayErrors.vue'
+import AdminAreaDialogue from '@/components/AdminAreaDialogue.vue'
 
 export default defineComponent({
   components: {
-    Errors
+    Errors,AdminAreaDialogue
   },
   setup: function () {
 

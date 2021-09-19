@@ -1,5 +1,4 @@
 import { createWebHistory, createRouter } from "vue-router"
-import About from "../pages/About.vue"
 import Home from '../pages/Home.vue'
 import AdminResources from '../pages/admin/Resources.vue'
 import CreateResource from '../pages/admin/CreateResource.vue'
@@ -10,11 +9,6 @@ const routes = [
         path: "/",
         name: "home",
         component: Home,
-    },
-    {
-        path: "/about",
-        name: "about",
-        component: About,
     },
     {
         path: "/admin/resources/create",

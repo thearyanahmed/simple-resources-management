@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    Welcome to admin page.
+    <AdminAreaDialogue />
 
     <Loading v-if="state.loading"/>
 
@@ -69,10 +69,11 @@ import NoDataFound from '@/components/Loading.vue'
 import Table from '@/components/Table.vue'
 import Pagination from '@/components/Pagination.vue'
 import ResourceTypeBadge from '@/components/Resource/Type.vue'
+import AdminAreaDialogue from '@/components/AdminAreaDialogue.vue'
 
 export default defineComponent({
   components: {
-    Loading, NoDataFound, Table, Pagination, ResourceTypeBadge
+    Loading, NoDataFound, Table, Pagination, ResourceTypeBadge, AdminAreaDialogue
   },
   setup() {
     let paginatedRes: PaginatedResponse = {
