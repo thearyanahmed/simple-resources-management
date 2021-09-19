@@ -1,8 +1,7 @@
 import api_routes from "@/api_routes";
+import { StringMap } from "@/compositions/QueryParams";
 
 const url = process.env.VUE_APP_API_BASE_URL
-
-interface StringMap { [key: string]: string; }
 
 export type Route = {
     method: string,
@@ -15,13 +14,13 @@ type Query = StringMap
 export default class Router {
 
     static getRoute(name : string, ...params : any[] ) : Route | null {
-        let route = Router.findRoute(name);
+        const route = Router.findRoute(name);
 
         if(!route) {
             return null
         }
 
-        let path = Router.parseRouteStrings(route.path,[...params[0]])
+        const path = Router.parseRouteStrings(route.path,[...params[0]])
 
         return {
             path: path,

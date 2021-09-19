@@ -1,11 +1,13 @@
 import axios, {AxiosRequestConfig, Method, AxiosResponse} from "axios"
 
 import Router, {Route} from "../router/Router"
+import {QueryParams, StringMap} from "@/compositions/QueryParams";
 
 type CallbackHandler = (data: any | null) => any
-type RequestData = object | FormData
-type Headers = object
-type ErrorBag = {
+type RequestData = QueryParams | FormData
+type Headers = StringMap
+
+export type ErrorBag = {
     message: string | null,
     errors: string[]
 }
@@ -19,7 +21,7 @@ export default class Request {
     private requestData: RequestData | null;
     private requestHeaders: Headers | null;
     private request: Promise<any> | null;
-    private response: AxiosResponse<any> | null;
+    private response: AxiosResponse | null;
     private data: any;
     private errorBag: ErrorBag | null;
 
@@ -46,7 +48,7 @@ export default class Request {
         return this
     }
 
-    endsWith(callback : CallbackHandler) {
+    finally(callback : CallbackHandler) {
         this.onCompletion = callback
         return this
     }
