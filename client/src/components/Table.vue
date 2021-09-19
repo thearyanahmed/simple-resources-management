@@ -3,7 +3,11 @@
         <table class="table-auto min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th v-for="(header, i) in headers" :key="i" scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th v-for="(header, i) in headers"
+                      :key="i"
+                      scope="col"
+                      :class="i === 0 ? 'text-left' : 'text-center'"
+                      class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {{ header }}
                   </th>
                   <!-- <th scope="col" class="relative px-6 py-3">

@@ -14,20 +14,24 @@
                 <tr v-for="(resource,i) in state.res.data" :key="i">
 
                   <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="text-sm text-gray-600">#{{ resource.id }} on <span class="text-xs text-gray-400">{{ displayDate(resource.created_at) }}</span></div>
+                    <div class="text-sm text-gray-400">
+                      #{{ resource.id }} @
+                      <span class="text-xs">{{ displayDate(resource.created_at) }}</span>
+                    </div>
+
                     <div class="break-all text-sm text-gray-900">
-                      <p class="break-all">{{ resource.title }}</p>
+                      <p class="break-all">
+                        {{ resource.title }}
+                      </p>
                     </div>
                   </td>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                      Active
-                    </span>
+                  <td class="px-6 py-4 text-center whitespace-nowrap">
+                    <ResourceTypeBadge :resource-type="resource.type" />
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <a href="#" class="text-indigo-600 hover:text-indigo-900">
+                    <router-link :to="{ name: 'admin.resources.edit', params: { id: resource.id } }" class="text-indigo-600 hover:text-indigo-900">
                       Edit
-                    </a>
+                    </router-link>
                   </td>
                 </tr>
               </Table>
@@ -56,10 +60,11 @@ import Loading from '@/components/Loading.vue'
 import NoDataFound from '@/components/Loading.vue'
 import Table from '@/components/Table.vue'
 import Pagination from '@/components/Pagination.vue'
+import ResourceTypeBadge from '@/components/Resource/Type.vue'
 
 export default defineComponent({
   components: {
-    Loading, NoDataFound, Table, Pagination
+    Loading, NoDataFound, Table, Pagination, ResourceTypeBadge
   },
   setup() {
     let paginatedRes: PaginatedResponse = {
@@ -92,7 +97,7 @@ export default defineComponent({
       q
     });
 
-    const headers = ['title', 'type', 'action']
+    const headers = ['title', 'type', '']
 
     function handlePageChange(event) {
         fetchResources(event.page)

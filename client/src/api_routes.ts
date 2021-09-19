@@ -4,4 +4,9 @@ export default  [
         method: 'GET',
         path: '/resources'
     },
+    {
+        name: 'resources.edit',
+        method: 'GET',
+        path: '/resources/{id}/edit'
+    },
 ]

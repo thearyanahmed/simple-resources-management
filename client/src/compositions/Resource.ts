@@ -1,9 +1,10 @@
 import { PaginationLinks, PaginationMeta } from "@/compositions/Pagination";
+import {StringMap} from "@/compositions/QueryParams";
 
-export type ResourceType = {
-    Link : 'link'
-    HtmlSnippet : 'html_snippet'
-    File : 'file'
+export enum ResourceType {
+    link = 'link',
+    html_snippet = 'html_snippet',
+    file = 'file',
 }
 
 export type Link = {
@@ -37,3 +38,20 @@ export type PaginatedResponse = {
     links: PaginationLinks
     meta : PaginationMeta
 }
+
+export type ResourceStrings = StringMap
+
+export const ResourceTypeText : ResourceStrings = {
+    'link' : 'link',
+    'html_snippet' : 'html snippet',
+    'file' : 'pdf',
+}
+
+export type ResourceColors = StringMap
+
+export const ResourceTypeColors : ResourceStrings = {
+    'link' : 'bg-red-300',
+    'html_snippet' : 'bg-green-400',
+    'file' : 'bg-purple-300',
+}
+

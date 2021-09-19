@@ -17,7 +17,7 @@
           <router-link :to="{ name: 'home' }" class="text-gray-800 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium py-2 px-2 md:mx-2">
             Home
           </router-link>
-          <router-link :to="{ name: 'admin_resources' }" class="text-gray-800 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium py-2 px-2 md:mx-2">
+          <router-link :to="{ name: 'admin.resources.index' }" class="text-gray-800 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium py-2 px-2 md:mx-2">
             Admin
           </router-link>
           <router-link :to="{ name: 'about' }" class="text-gray-800 rounded hover:bg-gray-900 hover:text-gray-100 hover:font-medium py-2 px-2 md:mx-2">
