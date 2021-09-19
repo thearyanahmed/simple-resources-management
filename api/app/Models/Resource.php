@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  * @property MorphTo resourceable
  *
  * @method static create(array $resourceData)
+ * @method filter(array $filters = [])
  * @method static isHtmlSnippet()
  * @method static isLink()
  */

@@ -19,13 +19,14 @@ class VisitorController extends Controller
     public function index()
     {
         $resources = Resource::query()
+                        ->with('resourceable')
                         ->filter(
                             request()->only('title','resource_type')
                         )
                         ->orderBy($this->orderBy(),$this->orderDirection())
                         ->paginate($this->perPage());
 
-        return new ResourceCollection($resources);
+        return SingleResourceResponse::collection($resources);
     }
 
     public function show($id)
