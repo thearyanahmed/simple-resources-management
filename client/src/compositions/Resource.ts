@@ -22,7 +22,7 @@ export type HtmlSnippet = {
 }
 
 export type File = {
-    abs_path : string
+    abs_url : string
     path : string
 }
 
@@ -81,11 +81,12 @@ export function resourceToFormFactory(resource : Resource, type: ResourceType) :
         form.opens_in_new_tab = resource.link?.opens_in_new_tab
         form.link = resource.link?.link // ugly
     } else if (type === ResourceType.file) {
-        form.file = resource.file?.abs_path
+        form.file = resource.file?.abs_url
     } else if (type === ResourceType.html_snippet) {
         form.markup = resource.html_snippet?.markup
         form.description = resource.html_snippet?.description
     }
 
+    console.log('form',form,'resource',resource)
     return form
 }
