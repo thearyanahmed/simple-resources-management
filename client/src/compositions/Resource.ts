@@ -7,6 +7,10 @@ export enum ResourceType {
     file = 'file',
 }
 
+const link = ResourceType.link
+const html_snippet = ResourceType.html_snippet
+const file = ResourceType.file
+
 export type Link = {
     link : string
     opens_in_new_tab: boolean
@@ -14,7 +18,7 @@ export type Link = {
 
 export type HtmlSnippet = {
     markup : string
-    description: boolean
+    description: string
 }
 
 export type File = {
@@ -25,8 +29,8 @@ export type File = {
 export type Resource = {
     id : number
     title: string
-    created_at: Date
-    updated_at: Date
+    created_at ?: Date
+    updated_at ?: Date
     type: ResourceType
     link ?: Link
     html_snippet ?: HtmlSnippet
@@ -42,9 +46,9 @@ export type PaginatedResponse = {
 export type ResourceStrings = StringMap
 
 export const ResourceTypeText : ResourceStrings = {
-    'link' : 'link',
-    'html_snippet' : 'html snippet',
-    'file' : 'pdf',
+    link : 'link',
+    html_snippet : 'html snippet',
+    file : 'file (pdf)',
 }
 
 export type ResourceColors = StringMap
@@ -55,3 +59,33 @@ export const ResourceTypeColors : ResourceStrings = {
     'file' : 'bg-purple-300',
 }
 
+
+export type ResourceForm = {
+    title: string,
+    resource_type: string,
+    link ?: string
+    opens_in_new_tab ?: boolean
+    file ?: string
+    markup ?: string
+    description ?: string
+}
+
+export function resourceToFormFactory(resource : Resource, type: ResourceType) : ResourceForm {
+
+    const form : ResourceForm = {
+        title: resource.title,
+        resource_type: type,
+    }
+
+    if(type === ResourceType.link) {
+        form.opens_in_new_tab = resource.link?.opens_in_new_tab
+        form.link = resource.link?.link // ugly
+    } else if (type === ResourceType.file) {
+        form.file = resource.file?.abs_path
+    } else if (type === ResourceType.html_snippet) {
+        form.markup = resource.html_snippet?.markup
+        form.description = resource.html_snippet?.description
+    }
+
+    return form
+}
