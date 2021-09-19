@@ -64,14 +64,15 @@ class EditResourceAction extends ResourceMutator
     /**
      * @throws Exception
      */
-    private function updateRelatedResource() : void
+    private function updateRelatedResource() : bool
     {
         if($this->resource->type === Resource::RESOURCE_LINK || $this->resource->type === Resource::RESOURCE_HTML_SNIPPET) {
-            $this->relatedResource->update($this->relatedResourceData);
+            return $this->relatedResource->update($this->relatedResourceData);
         } elseif ($this->resource->type === Resource::RESOURCE_FILE) {
             if(isset($this->relatedResource['file'])) {
                 $this->updateFile();
             }
+            return true;
         }
 
         throw new Exception('unsupported resource');

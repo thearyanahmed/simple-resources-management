@@ -11,6 +11,7 @@ use App\Http\Requests\UpdateResourceRequest;
 use App\Http\Resources\DeleteResourceResponse;
 use App\Http\Resources\SingleResourceCreatedResponse;
 use App\Http\Resources\SingleResourceResponse;
+use App\Http\Resources\SingleResourceUpdateResponse;
 use App\Models\Resource;
 use App\Traits\ValidatesIdFromRouteParameter;
 use Illuminate\Http\JsonResponse;
@@ -73,11 +74,15 @@ class ManagementController extends Controller
 
         abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND);
 
-        $resource = (new EditResourceAction($data))->create();
+        $resource = Resource::with('resourceable')->where('id',$id)->filter(['resource_type' => $data['resource_type']])->first();
 
-        $res = new SingleResourceCreatedResponse($resource);
+        abort_if(empty($resource), 404);
 
-        return response()->json($res, Response::HTTP_CREATED);
+        $updatedResource = (new EditResourceAction($resource,$resource->resourceable,$data))->edit();
+
+        $res = new SingleResourceUpdateResponse($updatedResource);
+
+        return response()->json($res, Response::HTTP_OK);
     }
 
 }
