@@ -36,25 +36,24 @@ class EditResourceAction extends ResourceMutator
     }
 
     /**
-     * @param Resource $resource
      * @return Resource
      * @throws Throwable
      */
-    public function edit(Resource $resource) : Resource
+    public function edit() : Resource
     {
         DB::beginTransaction();
 
         try {
             $this->updateRelatedResource();
 
-            $resource->update($this->resourceData);
+            $this->resource->update($this->resourceData);
 
             // commit the transaction
             DB::commit();
 
-            $resource->fresh('resourceable');
+            $this->resource->fresh('resourceable');
 
-            return $resource;
+            return $this->resource;
 
         } catch (Throwable $e) {
             DB::rollback();

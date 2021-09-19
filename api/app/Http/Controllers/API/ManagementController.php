@@ -4,8 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Actions\CreateResourceAction;
 use App\Actions\DeleteResourceAction;
+use App\Actions\EditResourceAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateResourceRequest;
+use App\Http\Requests\UpdateResourceRequest;
 use App\Http\Resources\DeleteResourceResponse;
 use App\Http\Resources\SingleResourceCreatedResponse;
 use App\Http\Resources\SingleResourceResponse;
@@ -62,4 +64,20 @@ class ManagementController extends Controller
     }
 
     // todo update()
+    /**
+     * @throws Throwable
+     */
+    public function update(UpdateResourceRequest $request,$id): JsonResponse
+    {
+        $data = $request->validated();
+
+        abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND);
+
+        $resource = (new EditResourceAction($data))->create();
+
+        $res = new SingleResourceCreatedResponse($resource);
+
+        return response()->json($res, Response::HTTP_CREATED);
+    }
+
 }
