@@ -1,7 +1,7 @@
 import axios, {AxiosRequestConfig, Method, AxiosResponse} from "axios"
 
 import Router, {Route} from "../router/Router"
-import {QueryParams, StringMap} from "@/compositions/QueryParams";
+import {QueryParams} from "@/compositions/QueryParams";
 
 type CallbackHandler = (data: any | null) => any
 type RequestData = QueryParams | FormData | object
@@ -18,6 +18,7 @@ export default class Request {
     private onCompletion: CallbackHandler | null;
     private endpoint: Route | null;
     private requestData: RequestData | null;
+    private params : QueryParams | null;
     private requestHeaders: Object | null;
     private request: Promise<any> | null;
     private response: AxiosResponse | null;
@@ -31,6 +32,7 @@ export default class Request {
         this.onCompletion = null
         this.endpoint = {} as Route
         this.requestData = null
+        this.params = null
         this.requestHeaders = null
         this.request = null
         this.errorBag = null
@@ -59,6 +61,11 @@ export default class Request {
 
     with(requestData : RequestData) {
         this.requestData = requestData
+        return this
+    }
+
+    queryParams(params : QueryParams) {
+        this.params = params
         return this
     }
 
@@ -101,12 +108,12 @@ export default class Request {
             headers['user_email'] = 'admin@admin.com'
         }
 
-        const data = this.requestData
 
         const config : AxiosRequestConfig = {
             headers: headers,
             url: this.endpoint.abs,
-            data: data,
+            params: this.params,
+            data: this.requestData,
             method: (this.endpoint.method as Method),
         }
 

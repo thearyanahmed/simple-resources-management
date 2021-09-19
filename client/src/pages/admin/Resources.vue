@@ -80,7 +80,7 @@ export default defineComponent({
 
     let r = useRoute()
 
-    const page : Page = Number(r.query['page']) ?? 1
+    const page : Page = r.query['page'] ? Number(r.query['page']) : 1
     const per_page : number = r.query['per_page'] ? Number(r.query['per_page']) : 10
 
     let q: QueryParams = {
@@ -110,7 +110,7 @@ export default defineComponent({
 
       (new Request())
           .to("resources.index", [])
-          .with(state.q)
+          .queryParams(state.q)
           .asAdmin()
           .success((res) => {
             state.res = res as PaginatedResponse;
