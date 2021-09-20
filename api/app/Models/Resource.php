@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -79,8 +80,10 @@ class Resource extends Model
         return $this->type === $type;
     }
 
-    public function downloadFile(string|null $title = null, array $headers = []): StreamedResponse
+    public function downloadFile(string|null $title = null, array $headers = [])
     {
+        $headers['Content-Type'] = 'application/pdf';
+
         return Storage::download($this->file->path, $title, $headers);
     }
 

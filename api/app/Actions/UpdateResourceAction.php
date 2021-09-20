@@ -34,7 +34,6 @@ class UpdateResourceAction extends ResourceMutator
 
         $this->relatedResourceType = $formData['resource_type'];
         $this->relatedResourceData = Arr::only($formData,$this->requiredRelatedResources($this->relatedResourceType));
-        logger()->error('rel',$this->relatedResourceData);
         $this->resourceData = ['title' => $formData['title']];
     }
 
