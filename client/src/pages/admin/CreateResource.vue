@@ -90,14 +90,17 @@
 
             </div>
 
-            <div class="flex items-center justify-between md:justify-end">
-              <Errors v-if="state.errorBag.errors.length > 0" :errors="state.errorBag.errors" :message="state.errorBag.message" class="mb-4" />
+            <div class="flex flex-col md:flex-row items-center justify-center md:justify-between">
+              <div class="flex justify-start">
+                <Errors v-if="state.errorBag.errors.length > 0" :errors="state.errorBag.errors" :message="state.errorBag.message" class="mb-4" />
+                <FlashMessage :message="state.flashMessage" />
+              </div>
 
-              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                      type="submit">
-                Create
-              </button>
+              <Button :processing="state.formProcessing"
+                      class="bg-blue-500 disabled:bg-blue-300 text-white"
+                      type="submit" text="Create" />
             </div>
+
           </form>
         </div>
       </div>
@@ -110,7 +113,7 @@
 import {computed, defineComponent, reactive} from "vue";
 import Request, {ErrorBag} from "@/plugins/Request";
 import {displayDate, objectToFormData} from "@/compositions/Utils";
-// import router from "@/router";
+import router from "@/router"
 
 import {
   ResourceForm,
@@ -119,10 +122,12 @@ import {
 } from "@/compositions/Resource";
 import Errors from '@/components/DisplayErrors.vue'
 import AdminAreaDialogue from '@/components/AdminAreaDialogue.vue'
+import FlashMessage from '@/components/FlashMessage.vue'
+import Button from '@/components/Button.vue'
 
 export default defineComponent({
   components: {
-    Errors,AdminAreaDialogue
+    Errors, AdminAreaDialogue, FlashMessage, Button
   },
   setup: function () {
 
@@ -142,6 +147,8 @@ export default defineComponent({
       errorBag,
       form,
       selectedFile,
+      flashMessage: null,
+      formProcessing: false,
     });
 
     const selectedFileName = computed(() => {
@@ -159,6 +166,7 @@ export default defineComponent({
 
     function createResource() {
 
+      state.formProcessing = true
       let request = (new Request()).to('resources.store', []).asAdmin()
 
       if (state.form.resource_type === ResourceType.file && state.selectedFile) {
@@ -179,14 +187,18 @@ export default defineComponent({
 
       request.with(formData)
       request.success(res => {
-        alert(res.message)
+        state.flashMessage = res.message
+
         state.selectedFile = null
-        // router.push({ name: 'admin.resources.index' })
+
+        setTimeout(() => {
+          router.push({ name: 'admin.resources.index' })
+        },3000)
       })
       request.error((err) => {
         state.errorBag = err
-        console.log('state',state.errorBag,err)
       })
+      .finally(() => state.formProcessing = false)
 
       request.send()
     }
