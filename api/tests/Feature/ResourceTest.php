@@ -651,36 +651,49 @@ class ResourceTest extends TestCase
         $updated = $res->decodeResponseJson()['resource'];
 
         $this->assertSame($linkResource->title,$updated['title']);
-        $this->assertSame($updated['link']['link'],$linkResource->resourceable->link);
+        $this->assertSame($linkResource->resourceable->link,$updated['link']['link']);
 
         $this->assertSame($linkResource->resourceable->opens_in_new_tab,$updated['link']['opens_in_new_tab']);
     }
-//
-//    public function test_a_link_resource_can_be_updated()
-//    {
-//        $link = Resource::isLink()->first();
-//
-//        $updateWith = [
-//            'title' => 'hello world',
-//            'resource_type' => 'link',
-//            'link' => 'https://newurl.com',
-//            'opens_in_new_tab' => false,
-//        ];
-//
-//        $res = $this->json('PUT',route('resources.update',$link->id),$updateWith,$this->adminAuthHeader);
-//
-//        $res->assertStatus(Response::HTTP_OK)
-//                ->assertJson([
-//                    'resource' => [
-//                        'id' => $link->id,
-//                        'type' => 'link',
-//                        'title' => $updateWith['title'],
-//                        'link' => [
-//                            'link' => $updateWith['link'],
-//                            'opens_in_new_tab' => $updateWith['opens_in_new_tab']
-//                        ]
-//                    ]
-//                ]);
-//
-//    }
+
+    public function test_a_html_snippet_resource_can_be_updated()
+    {
+        $htmlResource = Resource::isHtmlSnippet()->first();
+
+        $randomHtml = $this->faker->randomHtml(3,4);
+        $randomHtml = rtrim($randomHtml,"\n");
+        $randomHtml = ltrim($randomHtml,"\n");
+
+        $updateWith = [
+            'title' => 'hello world',
+            'resource_type' => 'html_snippet',
+            'description' => 'A new description',
+            'markup' => $randomHtml,
+        ];
+
+
+
+        $res = $this->json('PUT',route('resources.update',$htmlResource->id),$updateWith,$this->adminAuthHeader);
+
+        $res->assertStatus(Response::HTTP_OK)
+            ->assertJson([
+                'resource' => [
+                    'id' => $htmlResource->id,
+                    'type' => 'html_snippet',
+                    'title' => $updateWith['title'],
+                    'html_snippet' => [
+                        'markup' => $updateWith['markup'],
+                        'description' => $updateWith['description']
+                    ]
+                ]
+            ]);
+
+        $htmlResource = $htmlResource->fresh('resourceable');
+
+        $updated = $res->decodeResponseJson()['resource'];
+
+        $this->assertSame($htmlResource->title,$updated['title']);
+        $this->assertSame($htmlResource->resourceable->description,$updated['html_snippet']['description']);
+        $this->assertSame($htmlResource->resourceable->markup,$updated['html_snippet']['markup']);
+    }
 }
