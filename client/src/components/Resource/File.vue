@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <p>{{ file.abs_url }}</p>
+  <div class="p-4 my-4 border border-dotted border-2 border-yellow-400 rounded flex flex-row items-center justify-between bg-white bg-opacity-70">
+    <p class="text-sm text-gray-500 underline">{{ file.abs_url }}</p>
 
-    <button @click="download" :disabled="state.processing">{{ downloadFileText  }}</button>
+    <button @click="download" :disabled="state.processing" class="bg-yellow-200 font-bold rounded px-4 py-2">{{ downloadFileText  }}</button>
   </div>
 </template>
 
@@ -60,7 +60,7 @@ export default defineComponent({
         saveFileFromStream([res],saveAs)
       })
       .error((err) => state.errorBag = err )
-      .finally(() => state.processing = true)
+      .finally(() => state.processing = false)
       .download()
     }
 

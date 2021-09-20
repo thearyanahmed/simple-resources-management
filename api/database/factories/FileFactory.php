@@ -25,6 +25,8 @@ class FileFactory extends Factory
     {
         $dir = config('filesystems.file_dir');
 
+        // use real file.
+
         $file = UploadedFile::fake()->create(uniqid() . '.pdf' );
 
         $disk = config('filesystems.default');

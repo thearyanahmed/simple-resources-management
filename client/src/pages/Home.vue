@@ -1,19 +1,18 @@
 <template>
-  <div class="md:w-6/12 mx-auto flex flex-col border border-1 border-red-400 bg-white">
+  <!-- border border-1 border-red-400 -->
+  <div class="md:w-9/12 mx-auto flex flex-col bg-white">
 
     <div v-for="resource in state.res.data" :key="resource.id">
 
-      <p>{{ resource.id }}</p>
-
-      <div v-if="resource.type === ResourceType.link" class="border border-1 border-blue-400">
+      <div v-if="resource.type === ResourceType.link">
           <Link :link="resource.link" />
       </div>
 
-      <div v-if="resource.type === ResourceType.html_snippet" class="flex flex-col border border-1 border-blue-400">
+      <div v-if="resource.type === ResourceType.html_snippet">
         <HtmlSnippet :html-snippet="resource.html_snippet" />
       </div>
 
-      <div v-if="resource.type === ResourceType.file" class="flex flex-col border border-1 border-blue-400">
+      <div v-if="resource.type === ResourceType.file">
         <File :file="resource.file" :resource-id="resource.id"  :resource-title="resource.title"/>
       </div>
 
@@ -58,7 +57,7 @@ export default defineComponent({
     // todo change resource type
     let q: QueryParams = {
       page,
-      resource_type: 'file',
+      resource_type: 'html_snippet',
     }
 
     let state = reactive({
@@ -87,7 +86,6 @@ export default defineComponent({
           .finally(() => (state.loading = false))
           .send()
     }
-
 
     onMounted(() => {
       fetchResources(state.q.page ?? 1)
