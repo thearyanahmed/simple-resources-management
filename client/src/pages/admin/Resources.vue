@@ -89,7 +89,7 @@
 <script lang="ts">
 import { useRoute } from 'vue-router'
 
-import {defineComponent, reactive, onMounted} from "vue"
+import { defineComponent, reactive, onMounted } from "vue"
 import {PaginatedResponse} from "@/compositions/Resource"
 import {PaginationLinks, PaginationMeta} from "@/compositions/Pagination"
 import Request, {ErrorBag} from "@/plugins/Request"
@@ -120,10 +120,8 @@ export default defineComponent({
     let r = useRoute()
 
     const page : Page = Number(r.query['page']) || 1
-    const per_page : number = Number(r.query['per_page']) || 10
 
     let q: QueryParams = {
-      per_page,
       page,
       title: null,
       resource_type: 'any'
@@ -136,7 +134,6 @@ export default defineComponent({
       res: paginatedRes,
       errorBag,
       page,
-      per_page,
       q,
       deletedIds,
       search: {
@@ -155,8 +152,8 @@ export default defineComponent({
       state.q.title = state.search.title
       state.q.resource_type = state.search.resource_type
 
-      state.page = 1
-      fetchResources(state.page)
+      state.q.page = 1
+      fetchResources(state.q.page)
     }
 
     function clearSearch() {
@@ -166,8 +163,8 @@ export default defineComponent({
       state.q.title = state.search.title
       state.q.resource_type = state.search.resource_type
 
-      state.page = 1
-      fetchResources(state.page)
+      state.q.page = 1
+      fetchResources(state.q.page)
     }
 
     function handleDeletion(id: number) {
@@ -212,7 +209,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      fetchResources(state.page)
+      fetchResources(state.q.page ?? 1)
     })
     return {
       state, headers,
