@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [8.0, 7.4]
+        php: [8.0]
         os: [ubuntu-latest, windows-latest]
         laravel: [8.*]
         stability: [prefer-stable]
@@ -32,21 +32,15 @@ jobs:
       - name: Setup problem matchers
         working-directory: api
         run: |
-          echo $(pwd)
           echo "::add-matcher::${{ runner.tool_cache }}/php.json"
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
       - name: Install dependencies
         working-directory: api
         run: |
-          echo $(pwd)
-          ls
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: Execute tests
         working-directory: api
-        run: |
-          echo $(pwd)
-          ls
-          vendor/bin/phpunit
+        run: vendor/bin/phpunit
