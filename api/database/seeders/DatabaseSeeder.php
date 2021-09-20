@@ -19,11 +19,59 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+//        $this->populate();
+
+        $this->populateInRandomOrder();
+    }
+
+    private function populateInRandomOrder()
+    {
+        $disk = 'local';
+
+        $url = url('/') . Storage::url(self::DEMO_PDF);
+
+        $models = [
+            Link::class, HtmlSnippet::class, File::class,
+        ];
+
+        for($i =0 ; $i < 15; $i++) {
+
+            $selectedModel = $models[mt_rand(0,2)];
+
+            if($selectedModel === Link::class || $selectedModel === HtmlSnippet::class) {
+                $records = $selectedModel::factory()->count(mt_rand(1,3))->create();
+            } else {
+                $files = [];
+                // bypassing multiple dummy file upload
+                for($i = 0; $i < mt_rand(1,3); $i++) {
+                    $file = File::create([
+                        'disk' => $disk,
+                        'path' => self::DEMO_PDF,
+                        'abs_url' => $url
+                    ]);
+
+                    array_push($files,$file);
+                }
+
+                $records = collect($files);
+            }
+
+            $records->each(function ($row) use ($selectedModel) {
+                Resource::factory()->count(1)->create([
+                    'resourceable_type' => $selectedModel,
+                    'resourceable_id'   => $row->id
+                ]);
+            });
+        }
+    }
+
+    private function populate()
+    {
         collect([
-             Link::class, HtmlSnippet::class,
+            Link::class, HtmlSnippet::class,
         ])
             ->each(function ($model){
-                $model::factory()->count(100)->create()->each(function ($row) use ($model) {
+                $model::factory()->count(15)->create()->each(function ($row) use ($model) {
                     Resource::factory()->count(1)->create([
                         'resourceable_type' => $model,
                         'resourceable_id'   => $row->id
@@ -38,7 +86,7 @@ class DatabaseSeeder extends Seeder
         $files = [];
 
         // bypassing multiple dummy file upload
-        for($i = 0; $i < 10; $i++) {
+        for($i = 0; $i < 15; $i++) {
             $file = File::create([
                 'disk' => $disk,
                 'path' => self::DEMO_PDF,
@@ -54,6 +102,5 @@ class DatabaseSeeder extends Seeder
                 'resourceable_id'   => $row->id
             ]);
         });
-
     }
 }
