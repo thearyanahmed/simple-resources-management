@@ -3,13 +3,23 @@
     <AdminAreaDialogue />
 
     <div class="flex flex-col">
+      <div class="w-full flex justify-end my-4">
+
+        <router-link :to="{ name: 'admin.resources.create' }"
+                     class="text-white bg-blue-500 hover:bg-blue-600 rounded hover:text-gray-100 hover:font-medium py-2 px-2 md:mx-2">
+          Create a new resource
+        </router-link>
+      </div>
+
       <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
           <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
             <Table :headers="headers">
 
               <tr v-if="state.loading">
-                <td colspan="3" class="text-center py-8">loading...</td>
+                <td colspan="3" class="text-center py-8">
+                  loading...
+                </td>
               </tr>
               <tr v-else-if="state.loading === false && state.res.data.length === 0">
                 <td colspan="3" class="text-center py-8">No data found</td>
