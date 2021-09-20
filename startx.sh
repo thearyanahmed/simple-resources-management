@@ -1,5 +1,5 @@
 #!/bin/sh
 set -e
 
-nginx -g 'pid /tmp/nginx.pid; daemon off;' &
-php-fpm
+docker run --rm --interactive --tty --volume $(pwd)/api:/app --volume ${COMPOSER_HOME:-$HOME/.composer}:/tmp composer install
+
