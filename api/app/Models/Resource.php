@@ -103,6 +103,10 @@ class Resource extends Model
                 $query->where('title', 'like', '%' . $title . '%');
             })
             ->when($filters['resource_type'] ?? null,function ($query, $resourceType) {
+                if($resourceType === 'any') {
+                    return $query;
+                }
+
                 $typeClass = self::getResourceableType($resourceType);
 
                 if($typeClass === null) {

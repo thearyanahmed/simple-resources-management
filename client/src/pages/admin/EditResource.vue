@@ -12,6 +12,16 @@
 
             <Loading v-if="state.loading" message="loading resources..." />
 
+            <div v-if="state.loading === false && state.resourceNotFound">
+                <p class="text-red-500">{{ state.errorBag.message }}</p>
+                <p>
+                  <router-link :to="{ name: 'admin.resources.index' }" class="text-blue-500 underline hover:font-medium">
+                    Back to resources
+                  </router-link>
+                </p>
+
+            </div>
+
             <div v-else>
               <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="title">
@@ -156,6 +166,7 @@ export default defineComponent({
       selectedFile,
       formProcessing: false,
       flashMessage: null,
+      resourceNotFound: false,
     });
 
     const selectedFileName = computed(() => {
@@ -170,6 +181,7 @@ export default defineComponent({
     function fetchResource(id: number) {
       state.loading = true
       state.errorBag.errors = []
+      state.errorBag.resourceNotFound = false
 
       let r = new Request()
 
@@ -178,7 +190,11 @@ export default defineComponent({
             assignResourceAndForm(res)
           })
           .error((err) => {
+            console.log(err.message)
             state.errorBag = err
+            if(state.errorBag.statusCode === 404) {
+              state.resourceNotFound = true
+            }
           })
           .finally(() => state.loading = false)
           .asAdmin()

@@ -11,6 +11,7 @@ export type QueryParams = {
     per_page ?: number | null
     order_by ?: string
     order_dir ?: OrderDirection
-    filters ?: StringMap
     page ?: Page | null
+    title ?: string
+    resource_type ?: string
 }

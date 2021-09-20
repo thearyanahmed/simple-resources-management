@@ -14,6 +14,8 @@ class Controller extends BaseController
     const DEFAULT_ITEMS_PER_PAGE = 10;
     const MAX_ITEMS_PER_PAGE = 10;
 
+    const NOT_FOUND_MESSAGE = 'sorry, we could not find what you are looking for.';
+
     protected function perPage()
     {
         $perPage = request()->get('per_page', self::DEFAULT_ITEMS_PER_PAGE);

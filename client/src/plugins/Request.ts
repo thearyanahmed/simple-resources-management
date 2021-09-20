@@ -9,6 +9,7 @@ type RequestData = QueryParams | FormData | object
 export type ErrorBag = {
     message?: string | null,
     errors: string[]
+    statusCode ?: number | null
 }
 
 export default class Request {
@@ -117,8 +118,6 @@ export default class Request {
             method: (this.endpoint.method as Method),
         }
 
-        console.log('axios config',config)
-
         this.request = axios(config)
             .then(res => {
                 if(! this.onSuccess) {
@@ -132,10 +131,10 @@ export default class Request {
                 if(! this.onError) {
                     return
                 }
-
                 const errorBag : ErrorBag = {
-                    message: err.response.message ?? 'sorry something went wrong',
-                    errors: []
+                    message: err.response.data.message ?? 'sorry something went wrong',
+                    errors: [],
+                    statusCode: err.response.status,
                 }
 
                 for(const prop in (err.response.data.errors || [])) {

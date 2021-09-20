@@ -84,10 +84,7 @@
                   <p class="text-gray-900">Select Files</p>
                 </div>
               </div>
-
-              <a :href="state.form.file" class="text-blue-400 underline mt-4" target="_blank">View current file</a>
             </div>
-
           </div>
 
           <div class="flex flex-col md:flex-row items-center justify-center md:justify-between">

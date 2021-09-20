@@ -31,11 +31,11 @@ class VisitorController extends Controller
 
     public function show($id)
     {
-        abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND);
+        abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND,self::NOT_FOUND_MESSAGE);
 
         $resource = Resource::with('resourceable')->find($id);
 
-        abort_if(empty($resource), Response::HTTP_NOT_FOUND);
+        abort_if(empty($resource), Response::HTTP_NOT_FOUND,self::NOT_FOUND_MESSAGE);
 
         $res = new SingleResourceResponse($resource);
 
@@ -48,11 +48,11 @@ class VisitorController extends Controller
      */
     public function download($id): JsonResponse|StreamedResponse
     {
-        abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND);
+        abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND,self::NOT_FOUND_MESSAGE);
 
         $resource = Resource::with('resourceable')->find($id);
 
-        abort_if(empty($resource), Response::HTTP_NOT_FOUND);
+        abort_if(empty($resource), Response::HTTP_NOT_FOUND,self::NOT_FOUND_MESSAGE);
 
         if(! $resource->isTypeOf(Resource::RESOURCE_FILE)) {
 

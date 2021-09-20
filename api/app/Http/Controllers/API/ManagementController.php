@@ -15,7 +15,6 @@ use App\Http\Resources\SingleResourceUpdateResponse;
 use App\Models\Resource;
 use App\Traits\ValidatesIdFromRouteParameter;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -36,35 +35,19 @@ class ManagementController extends Controller
         return response()->json($res, Response::HTTP_CREATED);
     }
 
-    public function destroy($id)
-    {
-        abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND);
-
-        $resource = Resource::find($id);
-
-        abort_if(empty($resource), 404);
-
-        (new DeleteResourceAction($resource))->delete();
-
-        $res = new DeleteResourceResponse(null);
-
-        return response()->json($res,Response::HTTP_OK);
-    }
-
     public function edit($id)
     {
-        abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND);
+        abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND,self::NOT_FOUND_MESSAGE);
 
         $resource = Resource::with('resourceable')->find($id);
 
-        abort_if(empty($resource), 404);
+        abort_if(empty($resource), 404,self::NOT_FOUND_MESSAGE);
 
         $res = new SingleResourceResponse($resource);
 
         return response()->json($res, Response::HTTP_OK);
     }
 
-    // todo update()
     /**
      * @throws Throwable
      */
@@ -72,17 +55,33 @@ class ManagementController extends Controller
     {
         $data = $request->validated();
 
-        abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND);
+        abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND,self::NOT_FOUND_MESSAGE);
 
         $resource = Resource::with('resourceable')->where('id',$id)->filter(['resource_type' => $data['resource_type']])->first();
 
-        abort_if(empty($resource), 404);
+        abort_if(empty($resource), 404,self::NOT_FOUND_MESSAGE);
 
         $updatedResource = (new UpdateResourceAction($resource,$resource->resourceable,$data))->edit();
 
         $res = new SingleResourceUpdateResponse($updatedResource);
 
         return response()->json($res, Response::HTTP_OK);
+    }
+
+
+    public function destroy($id)
+    {
+        abort_if(! $this->routeParamIsId($id),Response::HTTP_NOT_FOUND,self::NOT_FOUND_MESSAGE);
+
+        $resource = Resource::find($id);
+
+        abort_if(empty($resource), 404,self::NOT_FOUND_MESSAGE);
+
+        (new DeleteResourceAction($resource))->delete();
+
+        $res = new DeleteResourceResponse(null);
+
+        return response()->json($res,Response::HTTP_OK);
     }
 
 }

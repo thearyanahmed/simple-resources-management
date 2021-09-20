@@ -3,12 +3,32 @@
     <AdminAreaDialogue />
 
     <div class="flex flex-col">
-      <div class="w-full flex justify-end my-4">
+      <div class="w-full flex justify-between my-4">
+        <div class="flex flex-row space-x-2 w-8/12">
+          <input id="title" v-model="state.search.title" placeholder="search by title" class="shadow appearance-none border rounded w-6/12 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" max="255"
+                 type="text">
 
-        <router-link :to="{ name: 'admin.resources.create' }"
-                     class="text-white bg-blue-500 hover:bg-blue-600 rounded hover:text-gray-100 hover:font-medium py-2 px-2 md:mx-2">
-          Create a new resource
-        </router-link>
+          <select id="resource-type" v-model="state.search.resource_type" class="block appearance-none border bg-white px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+            <option value="any">Any</option>
+            <option value="link">Link</option>
+            <option value="html_snippet">Html Snippet</option>
+            <option value="file">File ( pdf )</option>
+          </select>
+          <a href="#" @click="handleSearch" class="text-white bg-blue-500 hover:bg-blue-600 rounded hover:text-gray-100 hover:font-medium py-2 px-2 md:mx-2">
+            search
+          </a>
+          <a href="#" @click="clearSearch" class="text-gray-500 hover:font-medium py-2 px-2 md:mx-2">
+            clear search
+          </a>
+        </div>
+
+<!--        div needed for styling-->
+        <div class="w-4/12 flex justify-end">
+          <router-link :to="{ name: 'admin.resources.create' }"
+                       class="text-white bg-blue-500 hover:bg-blue-600 rounded hover:text-gray-100 hover:font-medium py-2 px-2 md:mx-2">
+            Create a new resource
+          </router-link>
+        </div>
       </div>
 
       <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -117,13 +137,35 @@ export default defineComponent({
       per_page,
       q,
       deletedIds,
+      search: {
+        resource_type: 'any',
+        title: null,
+      }
     })
 
     const headers = ['title', 'type', '']
 
     function handlePageChange(event : any) {
-      console.log('event',event)
         fetchResources(event.page)
+    }
+
+    function handleSearch() {
+      state.q.title = state.search.title
+      state.q.resource_type = state.search.resource_type
+
+      state.page = 1
+      fetchResources(state.page)
+    }
+
+    function clearSearch() {
+      state.search.title = null
+      state.search.resource_type = 'any'
+
+      state.q.title = state.search.title
+      state.q.resource_type = state.search.resource_type
+
+      state.page = 1
+      fetchResources(state.page)
     }
 
     function handleDeletion(id: number) {
@@ -172,7 +214,7 @@ export default defineComponent({
     })
     return {
       state, headers,
-      displayDate, handlePageChange, handleDeletion
+      displayDate, handlePageChange, handleDeletion, handleSearch, clearSearch
     }
   },
 })

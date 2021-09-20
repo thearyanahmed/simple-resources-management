@@ -1,7 +1,7 @@
 <template>
   <div class=" p-4 w-full mx-auto rounded-md">
 
-    <p class="w-full text-md font-bold text-red-500">
+    <p class="capitalize w-full text-md font-bold text-red-500">
       {{ message }}
     </p>
     <ul>
