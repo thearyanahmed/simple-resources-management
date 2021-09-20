@@ -2,6 +2,24 @@
 
 manage-node &
 
+DB_FILE=database/database.sqlite
+
+if [ ! -f "$DB_FILE" ]; then
+    echo "[+] $DB_FILE does not exist."
+    echo "[+] creating"
+    touch database/database.sqlite
+fi
+
+ENV_FILE=.env
+if [ ! -f "$ENV_FILE" ]; then
+    echo "[+] $ENV_FILE does not exist."
+    echo "[+] Copying .env"
+    cp .env.example .env
+fi
+
+echo "[+] Running php artisan migrate --seed"
+php artisan migrate --seed
+
 if [ ! -z "$WWWUSER" ]; then
     usermod -u $WWWUSER sail
 fi

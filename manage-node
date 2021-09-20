@@ -4,7 +4,7 @@ cd /var/www/client
 
 echo "[+] Building vue app"
 
-FILE=/etc/docker
+FILE=.env
 if [ ! -f "$FILE" ]; then
     echo "[+] $FILE does not exist."
     echo "[+] Copying .env"
