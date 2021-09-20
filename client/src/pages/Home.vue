@@ -57,7 +57,7 @@ export default defineComponent({
     // todo change resource type
     let q: QueryParams = {
       page,
-      resource_type: 'html_snippet',
+      resource_type: 'file',
     }
 
     let state = reactive({

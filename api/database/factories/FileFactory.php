@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\File;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,7 +27,6 @@ class FileFactory extends Factory
         $dir = config('filesystems.file_dir');
 
         // use real file.
-
         $file = UploadedFile::fake()->create(uniqid() . '.pdf' );
 
         $disk = config('filesystems.default');
