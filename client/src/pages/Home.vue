@@ -1,74 +1,103 @@
-<!--<template>-->
-<!--  <div class="md:max-w-6xl mx-auto flex flex-col border border-1 bg-white">-->
+<template>
+  <div class="md:w-6/12 mx-auto flex flex-col border border-1 border-red-400 bg-white">
 
-<!--    <div>-->
+    <div v-for="resource in state.res.data" :key="resource.id">
 
-<!--    </div>-->
-<!--  </div>-->
-<!--</template>-->
+      <p>{{ resource.id }}</p>
 
-<!--<script lang="ts">-->
+      <div v-if="resource.type === ResourceType.link" class="border border-1 border-blue-400">
+          <Link :link="resource.link" />
+      </div>
 
-<!--import {defineComponent, reactive} from "vue";-->
-<!--import {PaginatedResponse} from "@/compositions/Resource";-->
-<!--import {PaginationLinks, PaginationMeta} from "@/compositions/Pagination";-->
-<!--import Request, {ErrorBag} from "@/plugins/Request";-->
-<!--import {useRoute} from "vue-router";-->
-<!--import {Page, QueryParams} from "@/compositions/QueryParams";-->
+      <div v-if="resource.type === ResourceType.html_snippet" class="flex flex-col border border-1 border-blue-400">
+        <HtmlSnippet :html-snippet="resource.html_snippet" />
+      </div>
 
-<!--export default defineComponent({-->
-<!--  setup() {-->
+      <div v-if="resource.type === ResourceType.file" class="flex flex-col border border-1 border-blue-400">
+        <File :file="resource.file" :resource-id="resource.id" />
+      </div>
 
-<!--    let paginatedRes: PaginatedResponse = {-->
-<!--      data: [],-->
-<!--      links: {} as PaginationLinks,-->
-<!--      meta: {} as PaginationMeta,-->
-<!--    }-->
+    </div>
+  </div>
+</template>
 
-<!--    let errorBag: ErrorBag = {-->
-<!--      message: null,-->
-<!--      errors: [],-->
-<!--    }-->
+<script lang="ts">
 
-<!--    let r = useRoute()-->
+import {defineComponent, onMounted, reactive} from "vue";
+import {PaginatedResponse, ResourceType} from "@/compositions/Resource";
+import {PaginationLinks, PaginationMeta} from "@/compositions/Pagination";
+import Request, {ErrorBag} from "@/plugins/Request";
+import {useRoute} from "vue-router";
+import {Page, QueryParams} from "@/compositions/QueryParams";
 
-<!--    const page : Page = Number(r.query['page']) || 1-->
+import HtmlSnippet from "@/components/Resource/HtmlSnippet.vue";
+import Link from "@/components/Resource/Link.vue";
+import File from "@/components/Resource/File.vue";
 
-<!--    let q: QueryParams = {-->
-<!--      page,-->
-<!--      resource_type: 'any'-->
-<!--    }-->
+export default defineComponent({
+  components: {
+      HtmlSnippet, Link, File
+  },
+  setup() {
 
-<!--    let state = reactive({-->
-<!--      loading: false,-->
-<!--      res: paginatedRes,-->
-<!--      errorBag,-->
-<!--      page,-->
-<!--      q,-->
-<!--    })-->
+    let paginatedRes: PaginatedResponse = {
+      data: [],
+      links: {} as PaginationLinks,
+      meta: {} as PaginationMeta,
+    }
+
+    let errorBag: ErrorBag = {
+      message: null,
+      errors: [],
+    }
+
+    let r = useRoute()
+
+    const page : Page = Number(r.query['page']) || 1
+
+    // todo change resource type
+    let q: QueryParams = {
+      page,
+      resource_type: 'file',
+    }
+
+    let state = reactive({
+      loading: false,
+      res: paginatedRes,
+      errorBag,
+      q,
+    })
+
+    function fetchResources(page: Page) {
+      state.q.page = page
+
+      state.loading = true
+
+      const r = new Request()
+      r
+          .to("resources.index", [])
+          .queryParams(state.q)
+          .asAdmin()
+          .success((res) => {
+            state.res = res as PaginatedResponse
+          })
+          .error((err) => {
+            state.errorBag = err as ErrorBag
+          })
+          .finally(() => (state.loading = false))
+          .send()
+    }
 
 
-<!--    function fetchResources(page: Page) {-->
-<!--      state.q.page = page-->
+    onMounted(() => {
+      fetchResources(state.q.page ?? 1)
+    })
 
-<!--      state.loading = true-->
+    return {
+      state,
+      fetchResources, ResourceType
+    }
+  }
+})
 
-<!--      const r = new Request()-->
-<!--      r-->
-<!--          .to("resources.index", [])-->
-<!--          .queryParams(state.q)-->
-<!--          .asAdmin()-->
-<!--          .success((res) => {-->
-<!--            state.res = res as PaginatedResponse-->
-<!--          })-->
-<!--          .error((err) => {-->
-<!--            state.errorBag = err as ErrorBag-->
-<!--          })-->
-<!--          .finally(() => (state.loading = false))-->
-<!--          .send()-->
-<!--    }-->
-
-<!--  }-->
-<!--})-->
-
-<!--</script>-->
+</script>

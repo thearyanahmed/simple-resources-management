@@ -24,4 +24,9 @@ export default  [
         method: 'DELETE',
         path: '/resources/{id}'
     },
+    {
+        name: 'resources.download',
+        method: 'POST',
+        path: '/resources/{id}/download'
+    },
 ]

@@ -12,6 +12,11 @@ export type ErrorBag = {
     statusCode ?: number | null
 }
 
+enum ResponseType {
+    json= 'json',
+    blob = 'blob',
+}
+
 export default class Request {
     private actingAsAdmin: boolean;
     private onSuccess: CallbackHandler | null;
@@ -23,6 +28,7 @@ export default class Request {
     private requestHeaders: Object | null;
     private request: Promise<any> | null;
     private response: AxiosResponse | null;
+    private responseType: ResponseType;
     private data: any;
     private errorBag: ErrorBag | null;
 
@@ -38,6 +44,7 @@ export default class Request {
         this.request = null
         this.errorBag = null
         this.response = null
+        this.responseType = ResponseType.json
     }
 
     success(callback: CallbackHandler) {
@@ -85,6 +92,11 @@ export default class Request {
         return this
     }
 
+    download() {
+        this.responseType = ResponseType.blob
+        this.send()
+    }
+
     /**
      * Send the actual request.
      *
@@ -116,6 +128,7 @@ export default class Request {
             params: this.params,
             data: this.requestData,
             method: (this.endpoint.method as Method),
+            responseType: this.responseType,
         }
 
         this.request = axios(config)
