@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+cd /var/www/client
+
+echo "[+] Building vue app"
+
+FILE=/etc/docker
+if [ ! -f "$FILE" ]; then
+    echo "[+] $FILE does not exist."
+    echo "[+] Copying .env"
+    cp .env.example .env
+fi
+
+echo "[+] npm -i"
+npm i
+
+echo "[+] npm run build"
+npm run build
+
+echo "[+] installing preview server"
+npm install -g serve
+
+echo "[+] serving"
+serve -s dist
