@@ -195,7 +195,7 @@ class ResourceTest extends TestCase
         $testCases = [
             ['data' => ['description' => '', 'title' => '', 'markup' => '' ,'resource_type' => 'html_snippet' ], 'errors' => [ 'description' => ['The description field is required.'], 'title' => ['The title field is required.'],  'markup' => ['The markup field is required.']] ],
             ['data' => ['description' => UploadedFile::fake()->image('pseudo_image.png'),'markup' => UploadedFile::fake()->image('pseudo_image.png') , 'title' => UploadedFile::fake()->image('pseudo_image.png'),  'resource_type' => 'html_snippet'], 'errors' => [ 'description' => ['The description must be a string.'], 'title' => ['The title must be a string.'], 'markup' => ['The markup must be a string.']] ],
-            ['data' => [ 'description' => $this->faker->realTextBetween(250,300) , 'markup' => $this->faker->randomHtml(1,1) , 'title' => $this->faker->realTextBetween(250,300) , 'resource_type' => 'html_snippet'], 'errors' => [ 'title' => ['The title must not be greater than 255 characters.'] , 'description' => ['The description must not be greater than 255 characters.'] ]],
+            ['data' => [ 'description' => $this->faker->realText(mt_rand(260,400)) , 'markup' => $this->faker->randomHtml(1,1) , 'title' => $this->faker->realText(mt_rand(260,400)) , 'resource_type' => 'html_snippet'], 'errors' => [ 'title' => ['The title must not be greater than 255 characters.'] , 'description' => ['The description must not be greater than 255 characters.'] ]],
             ['data' => ['description' => [], 'markup' => [], 'title' => [] , 'resource_type' => 'html_snippet'], 'errors' => [  'description' => ['The description field is required.'], 'title' => ['The title field is required.'], 'markup' => ['The markup field is required.']]],
             ['data' => ['description' => (object) [], 'markup' => (object)[], 'title' => (object)[] , 'resource_type' => 'html_snippet'], 'errors' => [ 'description' => ['The description field is required.'], 'title' => ['The title field is required.'], 'markup' => ['The markup field is required.']]],
             ['data' => ['description' => "demo description", 'markup' => $this->faker->randomHtml(1,1) , 'title' => "demo title" , 'resource_type' => 'file'], 'errors' => [ 'file' => ['The file field is required.']]],
@@ -223,8 +223,8 @@ class ResourceTest extends TestCase
 
         foreach (range(1,$rounds) as $_) {
             $testData = [
-                'title'         => $this->faker->realTextBetween(5,250),
-                'description'   => $this->faker->realTextBetween(5,250),
+                'title'         => $this->faker->realText(mt_rand(10,40)),
+                'description'   => $this->faker->realText(mt_rand(10,40)),
                 'markup'        => str_replace("\n","",$this->faker->randomHtml(1,1)),
                 'resource_type' => 'html_snippet'
             ];
@@ -277,7 +277,7 @@ class ResourceTest extends TestCase
 
         foreach (range(1, $rounds) as $_) {
             $testData = [
-                'title' => $this->faker->realTextBetween(5, 250),
+                'title' => $this->faker->realText(mt_rand(10,40)),
                 'resource_type' => 'file',
                 'file' => UploadedFile::fake()->create('test.pdf')
             ];
@@ -480,7 +480,7 @@ class ResourceTest extends TestCase
     public function test_file_upload_accepts_files_upto_five_megabytes()
     {
         $testData = [
-            'title' => $this->faker->realTextBetween(5, 100),
+            'title' => $this->faker->realText(mt_rand(10,40)),
             'resource_type' => 'file',
             'file' =>  UploadedFile::fake()->create('hello.pdf', 5123 ),
         ];

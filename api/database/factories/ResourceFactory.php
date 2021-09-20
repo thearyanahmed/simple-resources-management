@@ -22,7 +22,7 @@ class ResourceFactory extends Factory
     public function definition()
     {
         return [
-            'title' => $this->faker->realTextBetween(5,30),
+            'title' => $this->faker->realText(mt_rand(10,40))
             // handle morph
         ];
     }

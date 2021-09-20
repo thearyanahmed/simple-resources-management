@@ -23,7 +23,7 @@ class HtmlSnippetFactory extends Factory
     public function definition()
     {
         return [
-            'description' => $this->faker->realTextBetween(1,255),
+            'description' => $this->faker->realText(mt_rand(10,40)),
             'markup' => str_replace("\n","",Str::of($this->faker->randomHtml())->limit(10000)),
         ];
     }
