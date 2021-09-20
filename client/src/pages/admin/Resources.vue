@@ -124,7 +124,9 @@ export default defineComponent({
 
     let q: QueryParams = {
       per_page,
-      page
+      page,
+      title: null,
+      resource_type: 'any'
     }
 
     const deletedIds : number[] = []

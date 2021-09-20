@@ -181,7 +181,7 @@ export default defineComponent({
     function fetchResource(id: number) {
       state.loading = true
       state.errorBag.errors = []
-      state.errorBag.resourceNotFound = false
+      state.resourceNotFound = false
 
       let r = new Request()
 

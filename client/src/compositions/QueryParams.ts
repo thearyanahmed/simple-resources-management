@@ -12,6 +12,6 @@ export type QueryParams = {
     order_by ?: string
     order_dir ?: OrderDirection
     page ?: Page | null
-    title ?: string
+    title ?: string | null
     resource_type ?: string
 }
