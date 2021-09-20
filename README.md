@@ -75,7 +75,7 @@ php artisan test
 
 in the api directory to test them.
 
-[https://github.com/thearyanahmed/simple-resources-management/actions](Github workflows was also setup to run tests on push).
+[Github workflows was also setup to run tests on push](https://github.com/thearyanahmed/simple-resources-management/actions).
 
 ## Authentication
 
@@ -100,14 +100,14 @@ Admin routes
 ## Api routes
 
 Visitor routes
-- `/resources` all resources
-- `resources/{id}/download` download pdf files
+- `/api/resources` all resources
+- `/api/resources/{id}/download` download pdf files
 
 Admin routes
-- `/resources` (post method) creates a resource 
-- `/resources/{id}/edit` (get method) retrieves resource for editing
-- `/resources/{id}` (put method) updates a resource 
-- `/resources/{id}` (delete method) deletes a resource 
+- `/api/resources` (post method) creates a resource 
+- `/api/resources/{id}/edit` (get method) retrieves resource for editing
+- `/api/resources/{id}` (put method) updates a resource 
+- `/api/resources/{id}` (delete method) deletes a resource 
 
 ## DB Design
 
