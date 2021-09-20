@@ -21,9 +21,9 @@
               Resource type
             </label>
             <select id="resource-type" v-model="state.form.resource_type" class="block appearance-none bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
-              <option value="link">Link</option>
-              <option value="html_snippet">Html Snippet</option>
-              <option value="file">File ( pdf )</option>
+              <option :value="resourceType.link">Link</option>
+              <option :value="resourceType.html_snippet">Html Snippet</option>
+              <option :value="resourceType.file">File ( PDF )</option>
             </select>
           </div>
 
@@ -107,7 +107,7 @@
 <script lang="ts">
 
 import {computed, defineComponent, reactive} from "vue"
-import Request, {ErrorBag} from "@/plugins/Request"
+import Request from "@/plugins/Request"
 import {displayDate, objectToFormData, emptyErrorBag} from "@/compositions/Utils"
 import router from "@/router"
 
