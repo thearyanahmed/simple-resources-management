@@ -112,11 +112,11 @@
 
 <script lang="ts">
 import {useRoute} from 'vue-router'
-import router from "@/router";
+import router from "@/router"
 
-import {computed, defineComponent, onMounted, reactive} from "vue";
-import Request, {ErrorBag} from "@/plugins/Request";
-import {displayDate, objectToFormData, saveFileFromStream} from "@/compositions/Utils";
+import {computed, defineComponent, onMounted, reactive} from "vue"
+import Request, {ErrorBag} from "@/plugins/Request"
+import {displayDate, objectToFormData, saveFileFromStream} from "@/compositions/Utils"
 
 import {
   Resource,
@@ -124,7 +124,7 @@ import {
   resourceToFormFactory,
   ResourceType,
   ResourceType as resourceType
-} from "@/compositions/Resource";
+} from "@/compositions/Resource"
 import Errors from '@/components/DisplayErrors.vue'
 import Loading from '@/components/Loading.vue'
 import AdminAreaDialogue from '@/components/AdminAreaDialogue.vue'
@@ -150,7 +150,7 @@ export default defineComponent({
     let errorBag: ErrorBag = {
       message: null,
       errors: [],
-    };
+    }
 
     let resource: Resource = {} as Resource
     let form: ResourceForm = {} as ResourceForm
@@ -167,7 +167,7 @@ export default defineComponent({
       formProcessing: false,
       flashMessage: null,
       resourceNotFound: false,
-    });
+    })
 
     const selectedFileName = computed(() => {
 
@@ -261,14 +261,14 @@ export default defineComponent({
 
     onMounted(() => {
       fetchResource(state.id)
-    });
+    })
     return {
       //accessors
       state, resourceType, selectedFileName,
 
       // funcs
       displayDate, handleChoseFile, updateResource, downloadCurrentFile
-    };
+    }
   },
-});
+})
 </script>

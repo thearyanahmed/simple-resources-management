@@ -18,7 +18,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue"
 import { Page } from "@/compositions/QueryParams"
-import {PaginationMeta} from "@/compositions/Pagination";
+import {PaginationMeta} from "@/compositions/Pagination"
 
 export default defineComponent({
   props: {

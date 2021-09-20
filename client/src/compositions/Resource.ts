@@ -1,5 +1,5 @@
-import { PaginationLinks, PaginationMeta } from "@/compositions/Pagination";
-import {StringMap} from "@/compositions/QueryParams";
+import { PaginationLinks, PaginationMeta } from "@/compositions/Pagination"
+import {StringMap} from "@/compositions/QueryParams"
 
 export enum ResourceType {
     link = 'link',

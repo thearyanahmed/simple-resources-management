@@ -10,7 +10,7 @@
 
 import {computed, defineComponent, PropType, reactive,} from "vue"
 import { File } from "@/compositions/Resource"
-import Request, {ErrorBag} from "@/plugins/Request";
+import Request, {ErrorBag} from "@/plugins/Request"
 import { saveFileFromStream } from "@/compositions/Utils"
 
 export default defineComponent({
@@ -47,7 +47,6 @@ export default defineComponent({
     function download() {
 
       state.errorBag.errors = []
-
       state.processing = true
 
       const r = new Request()

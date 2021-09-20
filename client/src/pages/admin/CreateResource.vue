@@ -106,16 +106,16 @@
 
 <script lang="ts">
 
-import {computed, defineComponent, reactive} from "vue";
-import Request, {ErrorBag} from "@/plugins/Request";
-import {displayDate, objectToFormData} from "@/compositions/Utils";
+import {computed, defineComponent, reactive} from "vue"
+import Request, {ErrorBag} from "@/plugins/Request"
+import {displayDate, objectToFormData} from "@/compositions/Utils"
 import router from "@/router"
 
 import {
   ResourceForm,
   ResourceType,
   ResourceType as resourceType
-} from "@/compositions/Resource";
+} from "@/compositions/Resource"
 import Errors from '@/components/DisplayErrors.vue'
 import AdminAreaDialogue from '@/components/AdminAreaDialogue.vue'
 import FlashMessage from '@/components/FlashMessage.vue'
@@ -130,7 +130,7 @@ export default defineComponent({
     let errorBag: ErrorBag = {
       message: null,
       errors: [],
-    };
+    }
 
     let form: ResourceForm = {} as ResourceForm
     form._method = 'POST'
@@ -145,7 +145,7 @@ export default defineComponent({
       selectedFile,
       flashMessage: null,
       formProcessing: false,
-    });
+    })
 
     const selectedFileName = computed(() => {
 
@@ -163,6 +163,7 @@ export default defineComponent({
     function createResource() {
 
       state.formProcessing = true
+      
       let request = (new Request()).to('resources.store', []).asAdmin()
 
       if (state.form.resource_type === ResourceType.file && state.selectedFile) {
@@ -205,7 +206,7 @@ export default defineComponent({
 
       // funcs
       displayDate, handleChoseFile, createResource
-    };
+    }
   },
-});
+})
 </script>

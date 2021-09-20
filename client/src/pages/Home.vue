@@ -2,6 +2,10 @@
   <!-- border border-1 border-red-400 -->
   <div class="md:w-9/12 mx-auto flex flex-col bg-white">
 
+    <div v-if="state.loading === false && state.res.data.length > 0" class="flex justify-center md:justify-end mt-4 md:mt-4 py-2">
+      <Pagination :paginator="state.res.meta" @changePage="handlePageChange" />
+    </div>
+
     <div v-for="resource in state.res.data" :key="resource.id">
 
       <div v-if="resource.type === ResourceType.link">
@@ -15,9 +19,7 @@
       <div v-if="resource.type === ResourceType.file">
         <File :file="resource.file" :resource-id="resource.id"  :resource-title="resource.title"/>
       </div>
-
     </div>
-
 
     <div v-if="state.loading === false && state.res.data.length > 0" class="flex justify-center md:justify-end mt-4 md:mt-4 py-2">
       <Pagination :paginator="state.res.meta" @changePage="handlePageChange" />
@@ -28,17 +30,17 @@
 
 <script lang="ts">
 
-import {defineComponent, onMounted, reactive} from "vue";
-import {PaginatedResponse, ResourceType} from "@/compositions/Resource";
-import {PaginationLinks, PaginationMeta} from "@/compositions/Pagination";
-import Request, {ErrorBag} from "@/plugins/Request";
-import {useRoute} from "vue-router";
-import {Page, QueryParams} from "@/compositions/QueryParams";
+import {defineComponent, onMounted, reactive} from "vue"
+import {PaginatedResponse, ResourceType} from "@/compositions/Resource"
+import {PaginationLinks, PaginationMeta} from "@/compositions/Pagination"
+import Request, {ErrorBag} from "@/plugins/Request"
+import {useRoute} from "vue-router"
+import {Page, QueryParams} from "@/compositions/QueryParams"
 
-import HtmlSnippet from "@/components/Resource/HtmlSnippet.vue";
-import Link from "@/components/Resource/Link.vue";
-import File from "@/components/Resource/File.vue";
-import Pagination from "@/components/Pagination.vue";
+import HtmlSnippet from "@/components/Resource/HtmlSnippet.vue"
+import Link from "@/components/Resource/Link.vue"
+import File from "@/components/Resource/File.vue"
+import Pagination from "@/components/Pagination.vue"
 
 export default defineComponent({
   components: {
@@ -86,7 +88,6 @@ export default defineComponent({
           .asAdmin()
           .success((res) => {
             state.res = res as PaginatedResponse
-            console.log('->',state.res.meta.current_page)
           })
           .error((err) => {
             state.errorBag = err as ErrorBag

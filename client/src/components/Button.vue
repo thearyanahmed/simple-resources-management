@@ -1,6 +1,6 @@
 <template>
   <button :type="type" :disabled="disabled || processing" :class="classes">
-<!--    use lots? -->
+<!--    use slots? -->
     {{ processing ? 'Processing' : text }}
   </button>
 </template>
