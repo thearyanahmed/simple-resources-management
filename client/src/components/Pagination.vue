@@ -17,6 +17,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue"
+import { Page } from "@/compositions/QueryParams"
 
 export default defineComponent({
   props: {
@@ -26,15 +27,16 @@ export default defineComponent({
       }
   },
   setup(props) {
-    function changePage(page: number) {
+
+    function changePage(page: Page) {
       //@ts-ignore
-      this.$emit('changePage',{ page })
+      this.$emit('changePage', {page})
     }
 
-    return {
+    return  {
       current_page : props.paginator.current_page,
       last_page : props.paginator.last_page,
-      changePage
+      changePage,
     }
   }
 })
