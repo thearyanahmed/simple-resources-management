@@ -87,7 +87,7 @@
                     </div>
                   </div>
 
-                  <a :href="state.form.file" class="text-blue-400 underline mt-4" target="_blank">View current file</a>
+                  <a href="#" @click="downloadCurrentFile" class="text-blue-400 underline mt-4">View current file</a>
                 </div>
               </div>
 
@@ -116,7 +116,7 @@ import router from "@/router";
 
 import {computed, defineComponent, onMounted, reactive} from "vue";
 import Request, {ErrorBag} from "@/plugins/Request";
-import {displayDate, objectToFormData} from "@/compositions/Utils";
+import {displayDate, objectToFormData, saveFileFromStream} from "@/compositions/Utils";
 
 import {
   Resource,
@@ -190,7 +190,6 @@ export default defineComponent({
             assignResourceAndForm(res)
           })
           .error((err) => {
-            console.log(err.message)
             state.errorBag = err
             if(state.errorBag.statusCode === 404) {
               state.resourceNotFound = true
@@ -246,6 +245,20 @@ export default defineComponent({
       request.send()
     }
 
+    function downloadCurrentFile() {
+      const r = new Request()
+
+      r.to('resources.download',[state.id])
+          .asAdmin()
+          .success((res) => {
+            const saveAs: string = state.resource.title + '.pdf'
+
+            saveFileFromStream([res],saveAs)
+          })
+          .error((err) => state.errorBag = err )
+          .download()
+    }
+
     onMounted(() => {
       fetchResource(state.id)
     });
@@ -254,7 +267,7 @@ export default defineComponent({
       state, resourceType, selectedFileName,
 
       // funcs
-      displayDate, handleChoseFile, updateResource
+      displayDate, handleChoseFile, updateResource, downloadCurrentFile
     };
   },
 });

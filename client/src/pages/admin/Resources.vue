@@ -9,10 +9,10 @@
                  type="text">
 
           <select id="resource-type" v-model="state.search.resource_type" class="block appearance-none border bg-white px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
-            <option value="any">Any</option>
-            <option value="link">Link</option>
-            <option value="html_snippet">Html Snippet</option>
-            <option value="file">File ( pdf )</option>
+            <option :value="ResourceType.any">Any</option>
+            <option :value="ResourceType.link">Link</option>
+            <option :value="ResourceType.html_snippet">Html Snippet</option>
+            <option :value="ResourceType.file">File ( PDF )</option>
           </select>
           <a href="#" @click="handleSearch" class="text-white bg-blue-500 hover:bg-blue-600 rounded hover:text-gray-100 hover:font-medium py-2 px-2 md:mx-2">
             search
@@ -87,14 +87,14 @@
 </template>
 
 <script lang="ts">
-import { useRoute } from 'vue-router'
+import {useRoute} from 'vue-router'
 
-import { defineComponent, reactive, onMounted } from "vue"
-import {PaginatedResponse} from "@/compositions/Resource"
+import {defineComponent, onMounted, reactive} from "vue"
+import {PaginatedResponse, ResourceType} from "@/compositions/Resource"
 import {PaginationLinks, PaginationMeta} from "@/compositions/Pagination"
 import Request, {ErrorBag} from "@/plugins/Request"
 import {Page, QueryParams} from "@/compositions/QueryParams"
-import { displayDate, objectToFormData } from "@/compositions/Utils"
+import {displayDate, objectToFormData} from "@/compositions/Utils"
 
 import Table from '@/components/Table.vue'
 import Pagination from '@/components/Pagination.vue'
@@ -124,7 +124,7 @@ export default defineComponent({
     let q: QueryParams = {
       page,
       title: null,
-      resource_type: 'any'
+      resource_type: ResourceType.any
     }
 
     const deletedIds : number[] = []
@@ -137,7 +137,7 @@ export default defineComponent({
       q,
       deletedIds,
       search: {
-        resource_type: 'any',
+        resource_type: ResourceType.any,
         title: null,
       }
     })
@@ -158,7 +158,7 @@ export default defineComponent({
 
     function clearSearch() {
       state.search.title = null
-      state.search.resource_type = 'any'
+      state.search.resource_type = ResourceType.any
 
       state.q.title = state.search.title
       state.q.resource_type = state.search.resource_type
@@ -212,7 +212,7 @@ export default defineComponent({
       fetchResources(state.q.page ?? 1)
     })
     return {
-      state, headers,
+      state, headers, ResourceType,
       displayDate, handlePageChange, handleDeletion, handleSearch, clearSearch
     }
   },

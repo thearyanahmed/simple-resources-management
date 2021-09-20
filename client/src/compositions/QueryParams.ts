@@ -1,3 +1,5 @@
+import {ResourceType} from "@/compositions/Resource";
+
 export interface StringMap { [key: string]: string; }
 
 export enum OrderDirection {
@@ -13,5 +15,5 @@ export type QueryParams = {
     order_dir ?: OrderDirection
     page ?: Page | null
     title ?: string | null
-    resource_type ?: string
+    resource_type ?: ResourceType
 }

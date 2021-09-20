@@ -17,6 +17,12 @@
       </div>
 
     </div>
+
+
+    <div v-if="state.loading === false && state.res.data.length > 0" class="flex justify-center md:justify-end mt-4 md:mt-4 py-2">
+      <Pagination :paginator="state.res.meta" @changePage="handlePageChange" />
+    </div>
+
   </div>
 </template>
 
@@ -32,10 +38,11 @@ import {Page, QueryParams} from "@/compositions/QueryParams";
 import HtmlSnippet from "@/components/Resource/HtmlSnippet.vue";
 import Link from "@/components/Resource/Link.vue";
 import File from "@/components/Resource/File.vue";
+import Pagination from "@/components/Pagination.vue";
 
 export default defineComponent({
   components: {
-      HtmlSnippet, Link, File
+      HtmlSnippet, Link, File, Pagination
   },
   setup() {
 
@@ -57,7 +64,7 @@ export default defineComponent({
     // todo change resource type
     let q: QueryParams = {
       page,
-      resource_type: 'file',
+      resource_type: ResourceType.any,
     }
 
     let state = reactive({
@@ -73,12 +80,13 @@ export default defineComponent({
       state.loading = true
 
       const r = new Request()
-      r
+          r
           .to("resources.index", [])
           .queryParams(state.q)
           .asAdmin()
           .success((res) => {
             state.res = res as PaginatedResponse
+            console.log('->',state.res.meta.current_page)
           })
           .error((err) => {
             state.errorBag = err as ErrorBag
@@ -87,13 +95,17 @@ export default defineComponent({
           .send()
     }
 
+    function handlePageChange(event : any) {
+      fetchResources(event.page)
+    }
+
     onMounted(() => {
       fetchResources(state.q.page ?? 1)
     })
 
     return {
       state,
-      fetchResources, ResourceType
+      ResourceType, handlePageChange
     }
   }
 })

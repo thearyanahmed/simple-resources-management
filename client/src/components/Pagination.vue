@@ -16,13 +16,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
+import { defineComponent, PropType } from "vue"
 import { Page } from "@/compositions/QueryParams"
+import {PaginationMeta} from "@/compositions/Pagination";
 
 export default defineComponent({
   props: {
       paginator: {
-        type: Object,
+        type: Object as PropType<PaginationMeta>,
         required: true,
       }
   },
@@ -33,6 +34,7 @@ export default defineComponent({
       this.$emit('changePage', {page})
     }
 
+    console.log('props',props.paginator)
     return  {
       current_page : props.paginator.current_page,
       last_page : props.paginator.last_page,

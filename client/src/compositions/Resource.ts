@@ -5,11 +5,12 @@ export enum ResourceType {
     link = 'link',
     html_snippet = 'html_snippet',
     file = 'file',
+    any = 'any',
 }
 
-const link = ResourceType.link
-const html_snippet = ResourceType.html_snippet
-const file = ResourceType.file
+// const link = ResourceType.link
+// const html_snippet = ResourceType.html_snippet
+// const file = ResourceType.file
 
 export type Link = {
     link : string
