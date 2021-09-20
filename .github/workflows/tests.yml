@@ -10,13 +10,11 @@ jobs:
       matrix:
         php: [8.0, 7.4]
         os: [ubuntu-latest, ubuntu-20.04]
-        laravel: [8.*, 7.*]
+        laravel: [8.*]
         stability: [prefer-lowest, prefer-stable]
         include:
           - laravel: 8.*
             testbench: 6.*
-          - laravel: 7.*
-            testbench: 5.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
@@ -43,11 +41,12 @@ jobs:
         run: |
           echo $(pwd)
           ls
-#          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-#          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
-#      - name: Execute tests
-#        working-directory: api
-#        run: |
-#          echo $(pwd)
-#          vendor/bin/phpunit
+      - name: Execute tests
+        working-directory: api
+        run: |
+          echo $(pwd)
+          ls
+          vendor/bin/phpunit
