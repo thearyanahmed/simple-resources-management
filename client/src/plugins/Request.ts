@@ -1,7 +1,7 @@
 import axios, {AxiosRequestConfig, Method, AxiosResponse} from "axios"
 
-import Router, {Route} from "../router/Router"
-import {QueryParams} from "@/compositions/QueryParams";
+import Router, {Route} from "@/router/Router"
+import {QueryParams} from "@/compositions/QueryParams"
 
 type CallbackHandler = (data: any | null) => any
 type RequestData = QueryParams | FormData | object

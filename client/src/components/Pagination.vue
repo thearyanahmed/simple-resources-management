@@ -34,7 +34,6 @@ export default defineComponent({
       this.$emit('changePage', {page})
     }
 
-    console.log('props',props.paginator)
     return  {
       current_page : props.paginator.current_page,
       last_page : props.paginator.last_page,

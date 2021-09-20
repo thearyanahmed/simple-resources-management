@@ -47,9 +47,9 @@ export type PaginatedResponse = {
 export type ResourceStrings = StringMap
 
 export const ResourceTypeText : ResourceStrings = {
-    link : 'link',
-    html_snippet : 'html snippet',
-    file : 'file (pdf)',
+    link : 'Link',
+    html_snippet : 'Html snippet',
+    file : 'File ( PDF )',
 }
 
 export type ResourceColors = StringMap
@@ -57,11 +57,7 @@ export type ResourceColors = StringMap
 export const ResourceTypeColors : ResourceStrings = {
     'link' : 'bg-red-300',
     'html_snippet' : 'bg-green-400',
-    'file' : 'bg-purple-300',
-}
-
-interface CreatesFormData {
-    toFormData() : FormData
+    'file' : 'bg-yellow-300',
 }
 
 export type ResourceForm  = {

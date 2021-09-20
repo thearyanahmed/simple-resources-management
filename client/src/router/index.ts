@@ -1,8 +1,8 @@
 import { createWebHistory, createRouter } from "vue-router"
-import Home from '../pages/Home.vue'
-import AdminResources from '../pages/admin/Resources.vue'
-import CreateResource from '../pages/admin/CreateResource.vue'
-import EditResource from '../pages/admin/EditResource.vue'
+import Home from '@/pages/Home.vue'
+import AdminResources from '@/pages/admin/Resources.vue'
+import CreateResource from '@/pages/admin/CreateResource.vue'
+import EditResource from '@/pages/admin/EditResource.vue'
 
 const routes = [
     {

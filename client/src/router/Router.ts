@@ -1,5 +1,5 @@
-import api_routes from "@/api_routes";
-import { StringMap } from "@/compositions/QueryParams";
+import api_routes from "@/api_routes"
+import { StringMap } from "@/compositions/QueryParams"
 
 const url = process.env.VUE_APP_API_BASE_URL
 
