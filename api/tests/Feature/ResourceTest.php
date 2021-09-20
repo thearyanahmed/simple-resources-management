@@ -615,8 +615,72 @@ class ResourceTest extends TestCase
 
         Storage::assertExists($res->decodeResponseJson()['resource']['file']['path']);
 
-        $fileResource->fresh('resourceable');
+        $fileResource = $fileResource->fresh('resourceable');
 
         $this->assertSame($res->decodeResponseJson()['resource']['file']['path'],$fileResource->file->path);
     }
+
+    public function test_a_link_resource_can_be_updated()
+    {
+        $linkResource = Resource::isLink()->first();
+
+        $updateWith = [
+            'title' => 'hello world',
+            'resource_type' => 'link',
+            'link' => 'https://newurl.com',
+            'opens_in_new_tab' => false,
+        ];
+
+        $res = $this->json('PUT',route('resources.update',$linkResource->id),$updateWith,$this->adminAuthHeader);
+
+        $res->assertStatus(Response::HTTP_OK)
+                ->assertJson([
+                    'resource' => [
+                        'id' => $linkResource->id,
+                        'type' => 'link',
+                        'title' => $updateWith['title'],
+                        'link' => [
+                            'link' => $updateWith['link'],
+                            'opens_in_new_tab' => $updateWith['opens_in_new_tab']
+                        ]
+                    ]
+                ]);
+
+        $linkResource = $linkResource->fresh('resourceable');
+
+        $updated = $res->decodeResponseJson()['resource'];
+
+        $this->assertSame($linkResource->title,$updated['title']);
+        $this->assertSame($updated['link']['link'],$linkResource->resourceable->link);
+
+        $this->assertSame($linkResource->resourceable->opens_in_new_tab,$updated['link']['opens_in_new_tab']);
+    }
+//
+//    public function test_a_link_resource_can_be_updated()
+//    {
+//        $link = Resource::isLink()->first();
+//
+//        $updateWith = [
+//            'title' => 'hello world',
+//            'resource_type' => 'link',
+//            'link' => 'https://newurl.com',
+//            'opens_in_new_tab' => false,
+//        ];
+//
+//        $res = $this->json('PUT',route('resources.update',$link->id),$updateWith,$this->adminAuthHeader);
+//
+//        $res->assertStatus(Response::HTTP_OK)
+//                ->assertJson([
+//                    'resource' => [
+//                        'id' => $link->id,
+//                        'type' => 'link',
+//                        'title' => $updateWith['title'],
+//                        'link' => [
+//                            'link' => $updateWith['link'],
+//                            'opens_in_new_tab' => $updateWith['opens_in_new_tab']
+//                        ]
+//                    ]
+//                ]);
+//
+//    }
 }
