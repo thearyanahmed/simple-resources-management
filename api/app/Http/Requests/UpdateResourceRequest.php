@@ -10,15 +10,12 @@ class UpdateResourceRequest extends CreateResourceRequest
     // check CreateResourceRequest
     protected function fileRules()
     {
-
         if($this->hasFile('file')) {
             return [
                 'file' => 'required|file|mimes:pdf|max:5120'
             ];
         }
 
-        return [
-            'file' => 'nullable'
-        ];
+        return [];
     }
 }

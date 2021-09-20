@@ -23,7 +23,7 @@ class File extends Model
         parent::boot();
 
         static::deleted(function($file) {
-            self::deleteFile($file,'after delete');
+            self::deleteFile($file->disk,$file->path,'after delete');
         });
     }
 

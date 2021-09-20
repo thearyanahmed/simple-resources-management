@@ -311,7 +311,7 @@ class ResourceTest extends TestCase
                         'updated_at'
                     ],
                 ])
-                ->assertStatus(201);
+                ->assertStatus(Response::HTTP_CREATED);
 
             $this->assertTrue(Storage::exists($response->decodeResponseJson()['resource']['file']['path']));
         }
@@ -571,5 +571,52 @@ class ResourceTest extends TestCase
         $this->json('get',route('resources.index'),[],[])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonCount(10,'data'); //default pagination
+    }
+
+    public function test_a_file_resource_can_be_updated()
+    {
+        $fileResource = Resource::isFile()->first();
+        $updateWith = [
+            'title' => 'hello world',
+            'resource_type' => 'file',
+        ];
+
+        $res = $this->json('PUT',route('resources.update',$fileResource->id),$updateWith,$this->adminAuthHeader);
+
+        $res
+            ->assertJson([
+                'resource' => [
+                    'id' => $fileResource->id,
+                    'title' => $updateWith['title'],
+                ]
+            ])
+            ->assertStatus(Response::HTTP_OK);
+
+        $updateWith['file'] = UploadedFile::fake()->create('test.pdf');
+
+        $res = $this->json('PUT',route('resources.update',$fileResource->id),$updateWith,$this->adminAuthHeader);
+
+        $res->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'resource' => [
+                    'title',
+                    'type',
+                    'file' => [
+                        'abs_url',
+                        'path'
+                    ],
+                    'id',
+                    'created_at',
+                    'updated_at'
+                ],
+            ]);
+
+        Storage::assertExists($res->decodeResponseJson()['resource']['file']['path']);
+
+        $fileResource->fresh('resourceable');
+
+        $this->assertSame($res->decodeResponseJson()['resource']['file']['path'],$fileResource->file->path);
     }
 }

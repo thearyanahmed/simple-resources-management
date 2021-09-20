@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 class UpdateResourceAction extends ResourceMutator
@@ -72,9 +73,12 @@ class UpdateResourceAction extends ResourceMutator
             return $this->relatedResource->update($this->relatedResourceData);
         } elseif ($this->resource->type === Resource::RESOURCE_FILE) {
 
-            if(! is_null(  $this->relatedResourceData['file'] ?? null)) {
+            if(! is_null($this->relatedResourceData['file'] ?? null)) {
+                $currentFilePath = $this->relatedResource->path;
+                $currentFileDisk = $this->relatedResource->disk;
+
                 $this->updateFile();
-                self::deleteFile($this->relatedResource,'after new file upload');
+                self::deleteFile($currentFileDisk,$currentFilePath,'after new file upload');
             }
             return true;
         }
