@@ -14,7 +14,7 @@
       </div>
 
       <div v-if="resource.type === ResourceType.file" class="flex flex-col border border-1 border-blue-400">
-        <File :file="resource.file" :resource-id="resource.id" />
+        <File :file="resource.file" :resource-id="resource.id"  :resource-title="resource.title"/>
       </div>
 
     </div>

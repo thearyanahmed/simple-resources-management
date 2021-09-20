@@ -145,9 +145,9 @@ export default class Request {
                     return
                 }
                 const errorBag : ErrorBag = {
-                    message: err.response.data.message ?? 'sorry something went wrong',
+                    message: err.response?.data?.message ?? 'sorry something went wrong.',
                     errors: [],
-                    statusCode: err.response.status,
+                    statusCode: err?.response?.status,
                 }
 
                 for(const prop in (err.response.data.errors || [])) {

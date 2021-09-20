@@ -2,15 +2,16 @@
   <div>
     <p>{{ file.abs_url }}</p>
 
-    <button @click="download" :disabled="state.processing">Download file</button>
+    <button @click="download" :disabled="state.processing">{{ downloadFileText  }}</button>
   </div>
 </template>
 
 <script lang="ts">
 
-import {defineComponent, PropType, reactive,} from "vue"
+import {computed, defineComponent, PropType, reactive,} from "vue"
 import { File } from "@/compositions/Resource"
-import Request from "@/plugins/Request";
+import Request, {ErrorBag} from "@/plugins/Request";
+import { saveFileFromStream } from "@/compositions/Utils"
 
 export default defineComponent({
   props: {
@@ -29,12 +30,23 @@ export default defineComponent({
   },
 
   setup(props) {
+    let errorBag: ErrorBag = {
+      message: null,
+      errors: [],
+    }
 
     const state = reactive({
-      processing: false
+      processing: false,
+      errorBag
+    })
+
+    const downloadFileText = computed(() => {
+        return state.processing ? 'Downloading...' : 'Download file'
     })
 
     function download() {
+
+      state.errorBag.errors = []
 
       state.processing = true
 
@@ -42,33 +54,18 @@ export default defineComponent({
 
       r.to('resources.download',[props.resourceId])
       .asRegularUser()
-      // .headers({'Content-Type': 'multipart/form-data' })
       .success((res) => {
-        console.log('success',res)
-        const blob = new Blob([res], { type: 'application/pdf' })
+        const saveAs: string = props.resourceTitle + '.pdf'
 
-        const url = window.URL.createObjectURL(blob)
-        let link = document.createElement('a');
-
-        //@ts-ignore
-        link.style = "display: none";
-        link.download = 'filename.pdf'
-        link.href = url
-
-        document.body.appendChild(link);
-        link.click()
-
-
+        saveFileFromStream([res],saveAs)
       })
-      .error((err) => console.log('err',err))
-      .finally(() => state.processing = false)
+      .error((err) => state.errorBag = err )
+      .finally(() => state.processing = true)
       .download()
-
-      console.log('download')
     }
 
     return {
-      state, download
+      state, download, downloadFileText
     }
   }
 })

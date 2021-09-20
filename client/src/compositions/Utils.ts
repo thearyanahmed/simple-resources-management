@@ -15,3 +15,19 @@ export function objectToFormData(form : ResourceForm | Object) : FormData {
 
     return formData
 }
+
+export function saveFileFromStream(blobParts : BlobPart[], saveAs: string) {
+    const blob = new Blob(blobParts, { type: 'application/pdf' })
+
+    const url = window.URL.createObjectURL(blob)
+    let link = document.createElement('a');
+
+    link.download = saveAs
+    link.classList.add('hidden')
+    link.href = url
+
+    document.body.appendChild(link);
+    link.click()
+
+    link.remove()
+}
