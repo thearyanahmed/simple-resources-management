@@ -32,10 +32,10 @@
 
 import {defineComponent, onMounted, reactive} from "vue"
 import {PaginatedResponse, ResourceType} from "@/compositions/Resource"
-import {PaginationLinks, PaginationMeta} from "@/compositions/Pagination"
 import Request, {ErrorBag} from "@/plugins/Request"
 import {useRoute} from "vue-router"
 import {Page, QueryParams} from "@/compositions/QueryParams"
+import {emptyPaginatedResponse, emptyErrorBag} from "@/compositions/Utils"
 
 import HtmlSnippet from "@/components/Resource/HtmlSnippet.vue"
 import Link from "@/components/Resource/Link.vue"
@@ -48,27 +48,17 @@ export default defineComponent({
   },
   setup() {
 
-    let paginatedRes: PaginatedResponse = {
-      data: [],
-      links: {} as PaginationLinks,
-      meta: {} as PaginationMeta,
-    }
-
-    let errorBag: ErrorBag = {
-      message: null,
-      errors: [],
-    }
+    let paginatedRes = emptyPaginatedResponse()
+    let errorBag = emptyErrorBag()
 
     let r = useRoute()
 
-    const page : Page = Number(r.query['page']) || 1
-
-    // todo change resource type
     let q: QueryParams = {
-      page,
+      page : Number(r.query['page']) || 1,
       resource_type: ResourceType.any,
     }
 
+    // state
     let state = reactive({
       loading: false,
       res: paginatedRes,
@@ -76,6 +66,7 @@ export default defineComponent({
       q,
     })
 
+    // functions
     function fetchResources(page: Page) {
       state.q.page = page
 

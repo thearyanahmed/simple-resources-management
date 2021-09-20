@@ -115,8 +115,8 @@ import {useRoute} from 'vue-router'
 import router from "@/router"
 
 import {computed, defineComponent, onMounted, reactive} from "vue"
-import Request, {ErrorBag} from "@/plugins/Request"
-import {displayDate, objectToFormData, saveFileFromStream} from "@/compositions/Utils"
+import Request from "@/plugins/Request"
+import {displayDate, emptyErrorBag, objectToFormData, saveFileFromStream} from "@/compositions/Utils"
 
 import {
   Resource,
@@ -139,6 +139,7 @@ export default defineComponent({
     // check if route param is number or not
     let r = useRoute()
 
+    // todo: improvement probably a better way to handle route param validation?
     if (Number.isNaN(r.params.id)) {
       alert('id must be a number. redirecting')
 
@@ -147,10 +148,7 @@ export default defineComponent({
 
     let id: number = Number(r.params.id)
 
-    let errorBag: ErrorBag = {
-      message: null,
-      errors: [],
-    }
+    let errorBag = emptyErrorBag()
 
     let resource: Resource = {} as Resource
     let form: ResourceForm = {} as ResourceForm
@@ -269,7 +267,7 @@ export default defineComponent({
       //accessors
       state, resourceType, selectedFileName,
 
-      // funcs
+      // functions
       displayDate, handleChoseFile, updateResource, downloadCurrentFile
     }
   },

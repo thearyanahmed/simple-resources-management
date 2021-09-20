@@ -1,7 +1,10 @@
 import moment from "moment"
-import {ResourceForm} from "@/compositions/Resource"
+import {PaginatedResponse, ResourceForm} from "@/compositions/Resource"
+import {PaginationLinks, PaginationMeta} from "@/compositions/Pagination";
+import {ErrorBag} from "@/plugins/Request";
+
 export function displayDate(date : Date) : string {
-    // 8:04pm 4th sept, 21
+    // format 8:04pm 4th sept, 21
     return moment(date).format('h:mm a DD MMM, YY')
 }
 
@@ -30,4 +33,19 @@ export function saveFileFromStream(blobParts : BlobPart[], saveAs: string) {
     link.click()
 
     link.remove()
+}
+
+export function emptyPaginatedResponse() : PaginatedResponse {
+    return {
+        data: [],
+        links: {} as PaginationLinks,
+        meta: {} as PaginationMeta,
+    }
+}
+
+export function emptyErrorBag() : ErrorBag {
+    return {
+        message: null,
+        errors: [],
+    }
 }

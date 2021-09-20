@@ -10,8 +10,8 @@
 
 import {computed, defineComponent, PropType, reactive,} from "vue"
 import { File } from "@/compositions/Resource"
-import Request, {ErrorBag} from "@/plugins/Request"
-import { saveFileFromStream } from "@/compositions/Utils"
+import Request from "@/plugins/Request"
+import {emptyErrorBag, saveFileFromStream} from "@/compositions/Utils"
 
 export default defineComponent({
   props: {
@@ -30,23 +30,22 @@ export default defineComponent({
   },
 
   setup(props) {
-    let errorBag: ErrorBag = {
-      message: null,
-      errors: [],
-    }
+    let errorBag = emptyErrorBag()
 
     const state = reactive({
       processing: false,
       errorBag
     })
 
+    // computed
     const downloadFileText = computed(() => {
         return state.processing ? 'Downloading...' : 'Download file'
     })
 
     function download() {
-
       state.errorBag.errors = []
+      state.errorBag.message = null
+
       state.processing = true
 
       const r = new Request()

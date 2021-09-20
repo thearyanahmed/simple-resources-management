@@ -3,8 +3,7 @@
     <p class="text-sm font-normal">{{ htmlSnippet.description }}</p>
 
     <textarea v-model="state.markup" rows="5" disabled class="my-2 bg-gray-50 border border-1 border-solid rounded p-4"></textarea>
-    
-    
+
     <div class="flex flex-row justify-end space-x-4 my-4">
       <div v-if="state.copied" class="text-gray-400">
         Copied to clipboard!

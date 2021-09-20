@@ -8,10 +8,6 @@ export enum ResourceType {
     any = 'any',
 }
 
-// const link = ResourceType.link
-// const html_snippet = ResourceType.html_snippet
-// const file = ResourceType.file
-
 export type Link = {
     link : string
     opens_in_new_tab: boolean

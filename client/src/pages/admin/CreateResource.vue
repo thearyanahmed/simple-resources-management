@@ -108,8 +108,9 @@
 
 import {computed, defineComponent, reactive} from "vue"
 import Request, {ErrorBag} from "@/plugins/Request"
-import {displayDate, objectToFormData} from "@/compositions/Utils"
+import {displayDate, objectToFormData, emptyErrorBag} from "@/compositions/Utils"
 import router from "@/router"
+
 
 import {
   ResourceForm,
@@ -127,10 +128,7 @@ export default defineComponent({
   },
   setup: function () {
 
-    let errorBag: ErrorBag = {
-      message: null,
-      errors: [],
-    }
+    let errorBag = emptyErrorBag()
 
     let form: ResourceForm = {} as ResourceForm
     form._method = 'POST'
@@ -138,6 +136,7 @@ export default defineComponent({
 
     let selectedFile: any = null
 
+    // state
     let state = reactive({
       loading: false,
       errorBag,
@@ -147,6 +146,7 @@ export default defineComponent({
       formProcessing: false,
     })
 
+    // computed
     const selectedFileName = computed(() => {
 
       if (state.selectedFile !== null) {
@@ -156,6 +156,7 @@ export default defineComponent({
       return null
     })
 
+    // methods
     function handleChoseFile(event: any) {
       state.selectedFile = event.target.files[0]
     }
@@ -206,7 +207,7 @@ export default defineComponent({
       //accessors
       state, resourceType, selectedFileName,
 
-      // funcs
+      // func
       displayDate, handleChoseFile, createResource
     }
   },

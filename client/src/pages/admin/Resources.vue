@@ -91,10 +91,9 @@ import {useRoute} from 'vue-router'
 
 import {defineComponent, onMounted, reactive} from "vue"
 import {PaginatedResponse, ResourceType} from "@/compositions/Resource"
-import {PaginationLinks, PaginationMeta} from "@/compositions/Pagination"
 import Request, {ErrorBag} from "@/plugins/Request"
 import {Page, QueryParams} from "@/compositions/QueryParams"
-import {displayDate, objectToFormData} from "@/compositions/Utils"
+import {displayDate, objectToFormData, emptyPaginatedResponse, emptyErrorBag} from "@/compositions/Utils"
 
 import Table from '@/components/Table.vue'
 import Pagination from '@/components/Pagination.vue'
@@ -106,23 +105,13 @@ export default defineComponent({
     Table, Pagination, ResourceTypeBadge, AdminAreaDialogue
   },
   setup() {
-    let paginatedRes: PaginatedResponse = {
-      data: [],
-      links: {} as PaginationLinks,
-      meta: {} as PaginationMeta,
-    }
-
-    let errorBag: ErrorBag = {
-      message: null,
-      errors: [],
-    }
+    let paginatedRes = emptyPaginatedResponse()
+    let errorBag = emptyErrorBag()
 
     let r = useRoute()
 
-    const page : Page = Number(r.query['page']) || 1
-
     let q: QueryParams = {
-      page,
+      page: Number(r.query['page']) || 1,
       title: null,
       resource_type: ResourceType.any
     }
@@ -133,7 +122,6 @@ export default defineComponent({
       loading: false,
       res: paginatedRes,
       errorBag,
-      page,
       q,
       deletedIds,
       search: {
@@ -142,8 +130,10 @@ export default defineComponent({
       }
     })
 
+    // table headers
     const headers = ['title', 'type', '']
 
+    // functions
     function handlePageChange(event : any) {
         fetchResources(event.page)
     }
