@@ -32,7 +32,9 @@ jobs:
           coverage: none
 
       - name: Setup problem matchers
+        working-directory: api
         run: |
+          echo $(pwd)
           echo "::add-matcher::${{ runner.tool_cache }}/php.json"
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
@@ -40,8 +42,11 @@ jobs:
         working-directory: api
         run: |
           echo $(pwd)
-#          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-#          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
-#
-#      - name: Execute tests
-#        run: vendor/bin/phpunit
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+
+      - name: Execute tests
+        working-directory: api
+        run: |
+          echo $(pwd)
+          vendor/bin/phpunit
