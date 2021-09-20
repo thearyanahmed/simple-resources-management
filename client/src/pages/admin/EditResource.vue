@@ -213,6 +213,9 @@ export default defineComponent({
     function updateResource() {
       state.formProcessing = true
 
+      state.errorBag.errors = []
+      state.errorBag.message = null
+
       state.form._method = 'PUT'
 
       let request = (new Request()).to('resources.update', [state.id]).asAdmin()

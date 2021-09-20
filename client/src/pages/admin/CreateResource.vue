@@ -161,6 +161,8 @@ export default defineComponent({
     }
 
     function createResource() {
+      state.errorBag.errors = []
+      state.errorBag.message = null
 
       state.formProcessing = true
       
