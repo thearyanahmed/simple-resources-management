@@ -44,7 +44,7 @@
               <tr v-else-if="state.loading === false && state.res.data.length === 0">
                 <td colspan="3" class="text-center py-8">No data found</td>
               </tr>
-              <tr v-else v-for="(resource,i) in state.res.data" :key="i" :class="state.deletedIds.indexOf(resource.id) > -1 ? 'bg-red-400': ''">
+              <tr v-else v-for="(resource,i) in state.res.data" :key="i" :class="state.deletedIds.indexOf(resource.id) > -1 ? 'bg-gray-200': ''">
 
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="text-sm text-gray-400">
