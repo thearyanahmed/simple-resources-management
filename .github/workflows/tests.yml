@@ -42,11 +42,12 @@ jobs:
         working-directory: api
         run: |
           echo $(pwd)
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+          ls
+#          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+#          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
-      - name: Execute tests
-        working-directory: api
-        run: |
-          echo $(pwd)
-          vendor/bin/phpunit
+#      - name: Execute tests
+#        working-directory: api
+#        run: |
+#          echo $(pwd)
+#          vendor/bin/phpunit
